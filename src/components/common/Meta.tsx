@@ -5,7 +5,7 @@ export const MetaData: FC = () => {
   return (
     <Head>
       <title>betich</title>
-      <meta name="description" content="hi, my name is thee!" />
+      <meta name="description" content="hi, my name is thee" />
     </Head>
   );
 };

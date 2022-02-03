@@ -8,12 +8,12 @@ const Home: NextPage = () => {
   return (
     <>
       <main className="bg-gray-900 text-white font-mono w-full min-h-screen flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-semibold">betich</h1>
-        <div className="flex flex-col space-y-2 my-4 items-center justify-center">
-          <p className="text-lg sm:text-sm">
+        <h1 className="text-4xl 2xl:text-6xl font-semibold">betich</h1>
+        <div className="flex flex-col text-lg sm:text-sm 2xl:text-4xl space-y-2 my-4 items-center justify-center">
+          <p>
             countdown &apos;til ent
           </p>
-          {/* <p>{percentLeft}/100%</p> */}
+          <p>year - {percentLeft}/100%</p>
         </div>
         <CountDown />
       </main>

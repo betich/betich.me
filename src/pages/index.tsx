@@ -11,7 +11,7 @@ const Home: NextPage = () => {
         <h1 className="text-4xl font-semibold">betich</h1>
         <div className="flex flex-col space-y-2 my-4 items-center justify-center">
           <p className="text-lg sm:text-sm">
-            countdown 'til ent
+            countdown &apos;til ent
           </p>
           {/* <p>{percentLeft}/100%</p> */}
         </div>

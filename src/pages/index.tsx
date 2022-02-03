@@ -1,17 +1,21 @@
+import { CountDown } from "@components/common/Countdown";
+import { useYearPercent } from "@utils/useYearPercent";
 import type { NextPage } from "next";
 
 const Home: NextPage = () => {
+  const percentLeft = useYearPercent()
+
   return (
     <>
-      <main>
-        <h1>Next.js App</h1>
-        <p className="text-white font-bold mt-2 text-sm mb-4">
-          Generated using{" "}
-          <a href="https://github.com/betich/next-boilerplate" target="_blank" rel="noreferrer">
-            {"betich's"}
-          </a>{" "}
-          Next.js boilerplate template
-        </p>
+      <main className="bg-gray-900 text-white font-mono w-full min-h-screen flex flex-col items-center justify-center">
+        <h1 className="text-4xl font-semibold">betich</h1>
+        <div className="flex flex-col space-y-2 my-4 items-center justify-center">
+          <p className="text-lg sm:text-sm">
+            countdown 'til ent
+          </p>
+          {/* <p>{percentLeft}/100%</p> */}
+        </div>
+        <CountDown />
       </main>
     </>
   );

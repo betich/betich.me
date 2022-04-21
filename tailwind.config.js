@@ -8,6 +8,9 @@ module.exports = {
   content: ["./**/*.ts", "./**/*.tsx"],
   theme: {
     extend: {
+      colors: {
+        lilac: { 100: "#cac2ff", 400: "#a091ff", 500: "#5D46EB", 600: "#422cc9" },
+      },
       typography: (theme) => ({
         DEFAULT: {
           css: {

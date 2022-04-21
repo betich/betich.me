@@ -34,7 +34,7 @@ const Home: NextPage = () => {
         }}
       >
         <h1 className="mb-4 flex flex-col space-y-4 text-4xl font-semibold sm:flex-row sm:items-end sm:space-y-0 sm:space-x-4">
-          <span>hey, i&quot;m</span>{" "}
+          <span>hey, i&apos;m</span>{" "}
           <span className="text-5xl text-lilac-400">
             betich{" "}
             <span onMouseOver={() => setHover(true)} onMouseOut={() => setHover(false)}>

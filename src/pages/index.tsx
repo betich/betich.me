@@ -50,6 +50,7 @@ const Home: NextPage = () => {
           <WebLink href="https://www.instagram.com/ttthhheeeeeeeee/">Instagram</WebLink>
           <WebLink href="https://tcas.betich.me">TCAS Schedule Generator</WebLink>
           <WebLink href="https://tucm.cc/u/thee">My TUCMC LinkTree</WebLink>
+          <WebLink href="https://learn.betich.me">Learn Web Development</WebLink>
         </div>
       </motion.section>
 

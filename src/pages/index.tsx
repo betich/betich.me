@@ -34,7 +34,7 @@ const Home: NextPage = () => {
         }}
       >
         <h1 className="mb-4 flex flex-col space-y-4 text-4xl font-semibold sm:flex-row sm:items-end sm:space-y-0 sm:space-x-4">
-          <span>hey, i&apos;m</span>{" "}
+          <span>Hey, I&apos;m</span>{" "}
           <span className="text-5xl text-lilac-400">
             betich{" "}
             <span onMouseOver={() => setHover(true)} onMouseOut={() => setHover(false)}>
@@ -43,7 +43,7 @@ const Home: NextPage = () => {
           </span>
         </h1>
 
-        <p className="mt-4 text-xl text-gray-400 sm:text-lg">feel free to check out all my links below!</p>
+        <p className="mt-4 text-xl text-gray-400 sm:text-lg">Triam Udom Suksa School, Chulalongkorn University</p>
 
         <div className="mt-8 flex w-full flex-col flex-wrap gap-4 text-lg text-gray-400 sm:flex-row sm:justify-center sm:text-base">
           <WebLink href="https://www.github.com/betich/">GitHub</WebLink>

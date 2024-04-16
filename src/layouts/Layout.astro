@@ -1,0 +1,22 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+---
+
+<BaseLayout>
+  <div class="mx-auto min-h-screen w-full max-w-lg px-2 pt-6">
+    <header>
+      <nav class="flex justify-between py-4">
+        <h1 class="text-base font-bold">betich</h1>
+        <div class="flex items-center gap-4">
+          <a class="" href="/">About</a>
+          <a class="" href="/blog">Blog</a>
+          <a class="" href="/projects">Projects</a>
+          <a class="" href="/contact">Contact</a>
+        </div>
+      </nav>
+    </header>
+    <main class="relative flex flex-col gap-4 py-4">
+      <slot />
+    </main>
+  </div>
+</BaseLayout>

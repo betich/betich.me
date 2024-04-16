@@ -4,7 +4,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#4845DA",
+        betich: {
+          light: "#DEDEFF",
+          dark: "#4845DA",
+        },
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"],

@@ -1,8 +1,14 @@
 ---
-import Landing from "@/components/landing";
+import Profile from "@/components/react/profile";
 import Layout from "@/layouts/Layout.astro";
+import ContactSection from "@/components/astro/contact.astro";
 ---
 
 <Layout>
-  <Landing client:load />
+  <h1 class="text-lg font-bold">About</h1>
+
+  <p class="mt-2">Hi, my name is Thee. I'm a full-stack developer based in Bangkok, Thailand.</p>
+  <ContactSection/>
+
+  <Profile client:load />
 </Layout>

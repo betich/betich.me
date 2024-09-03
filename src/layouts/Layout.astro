@@ -3,8 +3,8 @@ import BaseLayout from "./BaseLayout.astro";
 ---
 
 <BaseLayout>
-  <div class="mx-auto min-h-screen w-full max-w-lg px-2 pt-6">
-    <header>
+  <div class="mx-auto flex min-h-screen w-full max-w-lg flex-col justify-between px-2 pt-6 font-mono">
+    <!-- <header>
       <nav class="flex justify-between py-4">
         <h1 class="text-base font-bold">betich</h1>
         <div class="flex items-center gap-4">
@@ -14,9 +14,17 @@ import BaseLayout from "./BaseLayout.astro";
           <a class="" href="/contact">Contact</a>
         </div>
       </nav>
-    </header>
+    </header> -->
     <main class="relative flex flex-col gap-4 py-4">
       <slot />
     </main>
+    <footer class="flex justify-between text-gray-600">
+      <p class="py-4 text-center text-sm">Panithi Makthiengtrong (Thee)</p>
+      <a
+        class="cursor-pointer py-4 text-center text-sm underline hover:no-underline"
+        href="https://github.com/betich/betich.me"
+        target="_blank">Source</a
+      >
+    </footer>
   </div>
 </BaseLayout>

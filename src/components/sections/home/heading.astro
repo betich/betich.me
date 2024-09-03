@@ -1,0 +1,45 @@
+---
+// import { Facebook, Instagram, Linkedin, Twitter } from "lucide-astro";
+import { FaInstagram, FaFacebook, FaLinkedin, FaTwitter } from "react-icons/fa";
+---
+
+<div class="mb-8 flex items-center justify-between">
+  <div class="flex flex-col">
+    <h1 class="text-2xl font-bold text-betich-dark">betich</h1>
+    <p class="font-mono text-sm">Panithi Makthiengtrong</p>
+  </div>
+  <!-- <div class="flex items-center gap-2">
+    <a target="_blank" href="https://instagram.com/ttthhheeeeeeeee" class="social-icon">
+      <Instagram />
+    </a>
+    <a target="_blank" href="https://fb.me/panithi.makthiengtrong" class="social-icon">
+      <Facebook />
+    </a>
+    <a target="_blank" href="https://www.linkedin.com/in/betich/" class="social-icon">
+      <Linkedin />
+    </a>
+    <a target="_blank" href="https://x.com/betichhh" class="social-icon">
+      <Twitter />
+    </a>
+  </div> -->
+  <div class="flex items-center gap-2">
+    <a target="_blank" href="https://instagram.com/ttthhheeeeeeeee">
+      <FaInstagram client:load className="social-icon" />
+    </a>
+    <a target="_blank" href="https://fb.me/panithi.makthiengtrong">
+      <FaFacebook client:load className="social-icon" />
+    </a>
+    <a target="_blank" href="https://www.linkedin.com/in/betich/">
+      <FaLinkedin client:load className="social-icon" />
+    </a>
+    <a target="_blank" href="https://x.com/betichhh">
+      <FaTwitter client:load className="social-icon" />
+    </a>
+  </div>
+</div>
+
+<style>
+  .social-icon {
+    @apply h-5 w-5 cursor-pointer text-gray-900 underline transition-colors duration-500 ease-in-out hover:text-betich-dark hover:no-underline;
+  }
+</style>

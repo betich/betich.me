@@ -1,14 +1,23 @@
 ---
-import Profile from "@/components/react/profile";
 import Layout from "@/layouts/Layout.astro";
-import ContactSection from "@/components/astro/contact.astro";
+import Heading from "@/components/sections/home/heading.astro";
+import Link from "@/components/atoms/astro/link.astro";
 ---
 
 <Layout>
-  <h1 class="text-lg font-bold">About</h1>
+  <Heading />
 
-  <p class="mt-2">Hi, my name is Thee. I'm a full-stack developer based in Bangkok, Thailand.</p>
-  <ContactSection/>
-
-  <Profile client:load />
+  <div class="flex flex-col gap-4 font-mono prose-p:leading-loose">
+    <p>Hi, my name is Thee.</p>
+    <p>
+      I'm a third-year <Link href="http://www.ise.eng.chula.ac.th/"
+        >Robotics and Artificial Intelligence student at Chulalongkorn University</Link
+      >, Bangkok, Thailand.
+    </p>
+    <p>
+      I am passionate in building stuff — <span class="font-bold">developing</span> and <span class="font-bold"
+        >designing</span
+      > digital products that solves problems. Whether it'd be my own problems or others.
+    </p>
+  </div>
 </Layout>

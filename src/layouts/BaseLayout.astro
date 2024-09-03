@@ -12,45 +12,7 @@
     <meta name="generator" content={Astro.generator} />
     <title>Panithi Makthiengtrong (Thee)</title>
   </head>
-  <body class="rainbow-background">
+  <body>
     <slot />
   </body>
 </html>
-
-<style>
-  .main-background {
-    background-color: #150d24;
-    @apply text-betich-light;
-  }
-
-  /* animation - change to rainbow background every 5ms */
-
-  @keyframes rainbow {
-    0% {
-      background-color: #ff0000;
-    }
-    16.666% {
-      background-color: #ff8000;
-    }
-    33.333% {
-      background-color: #ffff00;
-    }
-    50% {
-      background-color: #00ff00;
-    }
-    66.666% {
-      background-color: #0000ff;
-    }
-    83.333% {
-      background-color: #8000ff;
-    }
-    100% {
-      background-color: #ff0000;
-    }
-  }
-
-  .rainbow-background {
-    animation: rainbow 5s linear infinite;
-    color: #150d24;
-  }
-</style>

@@ -29,12 +29,6 @@ importers:
       framer-motion:
         specifier: ^11.3.17
         version: 11.3.17(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      lucide-astro:
-        specifier: ^0.438.0
-        version: 0.438.0(astro@2.10.1)
-      lucide-react:
-        specifier: ^0.438.0
-        version: 0.438.0(react@18.2.0)
       nanostores:
         specifier: ^0.10.3
         version: 0.10.3
@@ -1466,16 +1460,6 @@ packages:
   lru-cache@6.0.0:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
     engines: {node: '>=10'}
-
-  lucide-astro@0.438.0:
-    resolution: {integrity: sha512-FMoOuw11xvbPOSvJDNIhmA+kXiwXIL2DCMeO1QPZj9q2siU6q/Es+eDSSU9qu1ZzF9d7rAnr4Mh+79r2vQuSuQ==}
-    peerDependencies:
-      astro: '>=2.7.1'
-
-  lucide-react@0.438.0:
-    resolution: {integrity: sha512-uq6yCB+IzVfgIPMK8ibkecXSWTTSOMs9UjUgZigfrDCVqgdwkpIgYg1fSYnf0XXF2AoSyCJZhoZXQwzoai7VGw==}
-    peerDependencies:
-      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc
 
   magic-string@0.30.9:
     resolution: {integrity: sha512-S1+hd+dIrC8EZqKyT9DstTH/0Z+f76kmmvZnkfQVmOpDEF9iVgdYif3Q/pIWHmCoo59bQVGW0kVL3e2nl+9+Sw==}
@@ -3877,14 +3861,6 @@ snapshots:
   lru-cache@6.0.0:
     dependencies:
       yallist: 4.0.0
-
-  lucide-astro@0.438.0(astro@2.10.1):
-    dependencies:
-      astro: 2.10.1
-
-  lucide-react@0.438.0(react@18.2.0):
-    dependencies:
-      react: 18.2.0
 
   magic-string@0.30.9:
     dependencies:

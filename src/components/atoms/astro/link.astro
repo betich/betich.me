@@ -2,6 +2,9 @@
 const { href } = Astro.props;
 ---
 
-<a href={href} target="_blank" rel="noreferrer" class="hover:no-underline; font-semibold text-betich-dark underline"
-  ><slot /></a
+<a
+  href={href}
+  target="_blank"
+  rel="noreferrer"
+  class="font-semibold text-betich-dark underline hover:no-underline dark:text-betich-light"><slot /></a
 >

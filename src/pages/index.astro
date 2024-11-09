@@ -1,23 +1,10 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import Heading from "@/components/sections/home/heading.astro";
-import Link from "@/components/atoms/astro/link.astro";
+import Intro from "@/components/sections/home/intro.astro";
 ---
 
 <Layout>
   <Heading />
-
-  <div class="flex flex-col gap-4 font-mono prose-p:leading-loose">
-    <p>Hi, my name is Thee.</p>
-    <p>
-      I'm a third-year <Link href="http://www.ise.eng.chula.ac.th/"
-        >Robotics and Artificial Intelligence student at Chulalongkorn University</Link
-      >, Bangkok, Thailand.
-    </p>
-    <p>
-      I am passionate in building stuff — <span class="font-bold">developing</span> and <span class="font-bold"
-        >designing</span
-      > digital products that solves problems. Whether it'd be my own problems or others.
-    </p>
-  </div>
+  <Intro />
 </Layout>

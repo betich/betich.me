@@ -1,17 +1,23 @@
 ---
 import Link from "@/components/atoms/astro/link.astro";
+import Paragraph from "@/components/atoms/astro/typography/paragraph.astro";
 ---
 
 <div class="flex flex-col gap-4 font-sans prose-p:leading-loose">
-  <p>Hi, my name is Thee.</p>
-  <p>
+  <Paragraph>Hi, my name is Thee.</Paragraph>
+  <Paragraph>
     I'm a third-year <Link href="http://www.ise.eng.chula.ac.th/"
       >Robotics and Artificial Intelligence student at Chulalongkorn University</Link
     >, Bangkok, Thailand.
-  </p>
-  <p>
-    I am passionate in building stuff — <span class="font-bold">developing</span> and <span class="font-bold"
-      >designing</span
-    > digital products that solves problems. Whether it'd be my own problems or others.
-  </p>
+  </Paragraph>
+  <Paragraph>
+    I started making websites in 2019 when I was 15 years old. Ever since then, I've developed a passion in building
+    things — whether it'd be <span class="font-bold">developing</span> and <span class="font-bold">designing</span> digital
+    products that solves problems and <span class="font-bold">sharing</span> about my experiences and learnings.
+  </Paragraph>
+  <Paragraph>
+    You can see some of my projects here in this website or on my <Link href="https://github.com/betich" target="_blank"
+      >GitHub</Link
+    > profile. Feel free to take a look around and contact me if you want to chat!
+  </Paragraph>
 </div>

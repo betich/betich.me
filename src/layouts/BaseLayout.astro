@@ -26,6 +26,12 @@ const className = Astro.props && Astro.props.className;
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>Panithi Makthiengtrong (Thee)</title>
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Panithi Makthiengtrong (Thee)"
+      href={new URL("feed.xml", Astro.site)}
+    />
   </head>
   <body class={className}>
     <slot />

@@ -1,0 +1,23 @@
+---
+import { projects } from "@/data";
+---
+
+<div class="flex flex-col gap-4 font-sans prose-p:leading-loose">
+  <h1 class="font-mono text-lg font-bold uppercase">Personal Projects</h1>
+
+  {
+    projects.map((project) => (
+      <div class="flex flex-col gap-2 border-l-2 border-slate-300 pl-4 transition-colors duration-500 hover:border-slate-500">
+        <h2 class="font-mono text-lg font-bold">{project.name}</h2>
+        <p class="text-gray-400">{project.details}</p>
+        <a
+          href={project.url.includes("http") ? project.url : "https://" + project.url}
+          class="text-slate-200 underline hover:no-underline"
+          target="_blank"
+        >
+          {project.url.replace(/(^\w+:|^)\/\//, "")}
+        </a>
+      </div>
+    ))
+  }
+</div>

@@ -12,6 +12,7 @@
   "dependencies": {
     "@astrojs/partytown": "^2.1.2",
     "@astrojs/react": "^3.3.0",
+    "@astrojs/rss": "^4.0.9",
     "@astrojs/tailwind": "^5.1.0",
     "@astrojs/ts-plugin": "^1.6.1",
     "@types/react": "^18.0.21",

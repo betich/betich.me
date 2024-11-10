@@ -1,6 +1,8 @@
 ---
 import cn from "@/utils/cn";
 import BaseLayout from "./BaseLayout.astro";
+import GartenRing from "@/components/icons/garten_ring.astro";
+import WonderfulSoftwareRing from "@/components/icons/wonderful_software_ring.astro";
 ---
 
 <BaseLayout className="bg-white text-gray-900 dark:bg-zinc-900 dark:text-slate-50">
@@ -19,13 +21,23 @@ import BaseLayout from "./BaseLayout.astro";
     <main class="relative flex flex-col gap-4 py-4">
       <slot />
     </main>
-    <footer class="flex justify-between text-xs text-gray-600 dark:text-gray-300">
-      <p class="py-4 text-center">Panithi Makthiengtrong (Thee)</p>
-      <a
-        class="cursor-pointer py-4 text-center underline hover:no-underline"
-        href="https://github.com/betich/betich.me"
-        target="_blank">Source</a
-      >
+    <footer class="flex flex-col items-end gap-4 py-4 text-xs text-gray-600 dark:text-gray-300">
+      <div class="flex w-full justify-between">
+        <p class="text-center">Panithi Makthiengtrong (Thee)</p>
+        <a
+          class="cursor-pointer text-center underline hover:no-underline"
+          href="https://github.com/betich/betich.me"
+          target="_blank">Source</a
+        >
+      </div>
+      <div class="flex gap-2">
+        <a href="https://webring.wonderful.software#betich.me" title="วงแหวนเว็บ">
+          <WonderfulSoftwareRing className="h-8 w-8" />
+        </a>
+        <a href="https://creatorsgarten.org/ring#betich.me" title="Creatorsgarten">
+          <GartenRing className="h-8 w-8" />
+        </a>
+      </div>
     </footer>
   </div>
 </BaseLayout>

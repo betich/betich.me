@@ -1,18 +1,21 @@
+import { SITE_DESCRIPTION, SITE_TITLE } from "@/config";
 import rss from "@astrojs/rss";
 
-export function GET(context) {
+import type { APIRoute } from "astro";
+
+export const GET: APIRoute = async (context) => {
   return rss({
     // `<title>` field in output xml
-    title: "Panithi Makthiengtrong (thee)",
+    title: SITE_TITLE,
     // `<description>` field in output xml
-    description: "A collection of my thoughts on things.",
+    description: SITE_DESCRIPTION,
     // Pull in your project "site" from the endpoint context
     // https://docs.astro.build/en/reference/api-reference/#contextsite
-    site: context.site,
+    site: context?.site as URL,
     // Array of `<item>`s in output xml
     // See "Generating items" section for examples using content collections and glob imports
     items: [],
     // (optional) inject custom xml
     customData: `<language>en-us</language>`,
   });
-}
+};

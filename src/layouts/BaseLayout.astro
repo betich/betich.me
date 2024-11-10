@@ -1,4 +1,6 @@
 ---
+import { SITE_DESCRIPTION, SITE_TITLE } from "@/config";
+
 const className = Astro.props && Astro.props.className;
 ---
 
@@ -25,12 +27,14 @@ const className = Astro.props && Astro.props.className;
     <meta name="theme-color" content="#ffffff" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <title>Panithi Makthiengtrong (Thee)</title>
+    <title>{SITE_TITLE}</title>
+    <meta name="description" content={SITE_DESCRIPTION} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
     <link
       rel="alternate"
       type="application/rss+xml"
       title="Panithi Makthiengtrong (Thee)"
-      href={new URL("feed.xml", Astro.site)}
+      href={new URL("rss.xml", Astro.site)}
     />
   </head>
   <body class={className}>

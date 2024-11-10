@@ -7,9 +7,5 @@ import sitemap from "@astrojs/sitemap";
 export default defineConfig({
   output: "static",
   site: "https://betich.me",
-  integrations: [
-    // sitemap(),
-    tailwind(),
-    react(),
-  ],
+  integrations: [sitemap(), tailwind(), react()],
 });

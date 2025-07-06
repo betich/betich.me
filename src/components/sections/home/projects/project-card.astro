@@ -1,0 +1,28 @@
+---
+import Paragraph from "@/components/atoms/astro/typography/paragraph.astro";
+import type { Project } from "@/data";
+
+// project as prop
+export interface Props {
+  project: Project;
+}
+
+const { project }: Props = Astro.props;
+---
+
+<div
+  class="flex flex-col gap-2 border-l-2 border-slate-300 py-3 pl-4 transition-colors duration-500 hover:border-slate-500"
+>
+  <p class="font-mono text-sm text-gray-400">
+    {project.year ? `YEAR: ${project.year}` : "YEAR: Unknown"}
+  </p>
+  <h2 class="font-mono text-lg font-bold">{project.name}</h2>
+  <p class="leading-none text-gray-400">{project.details}</p>
+  <a
+    href={project.url.includes("http") ? project.url : "https://" + project.url}
+    class="text-slate-200 underline hover:no-underline"
+    target="_blank"
+  >
+    {project.url.replace(/(^\w+:|^)\/\//, "")}
+  </a>
+</div>

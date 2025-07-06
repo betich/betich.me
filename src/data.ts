@@ -1,4 +1,13 @@
-export const workExperience = [
+export interface WorkExperience {
+  position: string;
+  type: string;
+  company: string;
+  url: string;
+  years: string[];
+  details: string[];
+}
+
+export const workExperience: WorkExperience[] = [
   {
     position: "Data Scientist",
     type: "Internship",
@@ -22,14 +31,42 @@ export const workExperience = [
   },
 ];
 
-export const projects = [
+export const projects: Project[] = [
+  {
+    name: "Intania Jukebox",
+    details: "Web-based music player, powered by raspberry pi.",
+    url: "https://github.com/betich/intania-jukebox",
+    year: "2024",
+  },
+  {
+    name: "Color Guessor Toy",
+    details:
+      'Project for "Robotics Project II" subject of the Robotics AI program, in collaboration with students from the Industrial Design program, Faculty of Architecture.',
+    url: "https://github.com/betich/robo2-color-guessor",
+    year: "2024",
+  },
+  {
+    name: "Ped4You",
+    details:
+      "ช่วยทุกคนกาบัตรเลือกตั้งของตัวเองได้อย่างมั่นใจ — An interactive website that provides information about the 2023 Election, including an Election Simulator, a game that guides you through the process of the election. Integrated with a machine learning model that asseses if the election ballot is valid or not.",
+    url: "https://github.com/PED4you/ped4you-website",
+    year: "2023",
+  },
   {
     name: "TCAS Schedule Generator",
     details:
       "A website for generating a study and exam schedule for students who are applying for universities in Thailand, the website gained a small traction via twitter and my friends.",
-    url: "tcas.betich.me",
+    url: "https://tcas.betich.me",
+    year: "2022",
   },
 ];
+
+export interface Project {
+  name: string;
+  details: string;
+  url: string;
+  year?: string;
+}
 
 export const contributions = [
   {

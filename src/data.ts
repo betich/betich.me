@@ -9,6 +9,17 @@ export interface WorkExperience {
 
 export const workExperience: WorkExperience[] = [
   {
+		position: 'Software Engineer',
+    type: 'Internship',
+		company: 'Sertis Company Limited',
+		url: 'https://sertiscorp.com/',
+		years: ['Jun 2025', 'Oct 2025'],
+		details: [
+      'Helped develop and implement a design tokens system that synchronizes work from Figma by the UX/UI team with the dev team by converting them into code automatically using Style Dictionary.',
+      'Used ReactJS to build front-end systems for enterprise-grade applications.',
+		]
+	},
+  {
     position: "Data Scientist",
     type: "Internship",
     company: "Bualuang Securities Public Company Limited",
@@ -32,6 +43,12 @@ export const workExperience: WorkExperience[] = [
 ];
 
 export const projects: Project[] = [
+  {
+    name: "Contester.life",
+    details: "A website that gathers gather competition opportunities, camps, and activities that may be the starting point of great opportunities",
+    url: "https://contester.life",
+    year: "2025",
+  },
   {
     name: "Intania Jukebox",
     details: "Web-based music player, powered by raspberry pi.",

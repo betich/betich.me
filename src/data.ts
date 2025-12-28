@@ -44,12 +44,6 @@ export const workExperience: WorkExperience[] = [
 
 export const projects: Project[] = [
   {
-    name: "Contester.life",
-    details: "A website that gathers gather competition opportunities, camps, and activities that may be the starting point of great opportunities",
-    url: "https://contester.life",
-    year: "2025",
-  },
-  {
     name: "Intania Jukebox",
     details: "Web-based music player, powered by raspberry pi.",
     url: "https://github.com/betich/intania-jukebox",
@@ -86,6 +80,11 @@ export interface Project {
 }
 
 export const contributions = [
+	{
+    name: "Contester.life",
+    details: "A website that gathers gather competition opportunities, camps, and activities that may be the starting point of great opportunities",
+    url: "https://contester.life",
+  },
   {
     name: "Junior Webmaster Camp 13",
     details: "Web services for Junior Webmaster Camp 13, a camp that teaches web development to high school students.",

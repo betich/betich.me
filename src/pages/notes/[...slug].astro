@@ -1,0 +1,112 @@
+---
+import SidebarLayout from "@/layouts/SidebarLayout.astro";
+import { getCollection } from "astro:content";
+import { FaRss } from "react-icons/fa";
+import { FiTwitter, FiLink } from "react-icons/fi";
+
+export async function getStaticPaths() {
+  const notes = (await getCollection("notes", ({ data }) => !data.draft)).sort(
+    (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+  );
+  return notes.map((note, i) => ({
+    params: { slug: note.slug },
+    props: { note, prev: notes[i + 1] ?? null, next: notes[i - 1] ?? null },
+  }));
+}
+
+const { note, prev, next } = Astro.props;
+const { Content } = await note.render();
+
+const pageUrl = new URL(`/notes/${note.slug}`, Astro.site).toString();
+const tweetUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(note.data.title)}&url=${encodeURIComponent(pageUrl)}`;
+
+function formatDate(date: Date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}.${m}.${d}`;
+}
+---
+
+<SidebarLayout currentPath="/notes">
+  <article class="prose prose-sm prose-gray max-w-none">
+    <p class="not-prose mb-4 font-mono text-xs tracking-tight text-betich-dark">{formatDate(note.data.date)}</p>
+    <h1 class="not-prose mb-6 font-mono text-xl font-bold text-betich-dark">{note.data.title}</h1>
+    <Content />
+  </article>
+
+  <!-- Share + RSS -->
+  <div class="not-prose mt-10 flex items-center gap-4 border-t border-betich-light pt-6">
+    <span class="font-mono text-xs text-gray-400">share</span>
+    <a
+      href={tweetUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="text-gray-400 transition-colors hover:text-betich-dark"
+      title="Share on X"
+    >
+      <FiTwitter client:load className="h-4 w-4" />
+    </a>
+    <button
+      id="copy-link"
+      class="text-gray-400 transition-colors hover:text-betich-dark"
+      title="Copy link"
+      data-url={pageUrl}
+    >
+      <FiLink client:load className="h-4 w-4" />
+    </button>
+    <a
+      href="/feed.xml"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="ml-auto text-gray-400 transition-colors hover:text-betich-dark"
+      title="RSS feed"
+    >
+      <FaRss client:load className="h-4 w-4" />
+    </a>
+  </div>
+
+  <!-- Prev / Next -->
+  <nav class="not-prose mt-6 grid grid-cols-2 gap-4">
+    {prev ? (
+      <a
+        href={`/notes/${prev.slug}`}
+        class="group flex flex-col gap-1 rounded-lg border border-betich-light px-4 py-3 transition-colors hover:border-betich-dark"
+      >
+        <span class="font-mono text-xs text-gray-400 transition-colors group-hover:text-betich-dark">← previous</span>
+        <span class="text-sm text-gray-700 transition-colors group-hover:text-betich-dark">{prev.data.title}</span>
+      </a>
+    ) : (
+      <div class="flex flex-col gap-1 rounded-lg border border-gray-200 px-4 py-3 opacity-60 cursor-not-allowed">
+        <span class="font-mono text-xs text-gray-400">← previous</span>
+        <span class="text-sm text-gray-500">nothing here</span>
+      </div>
+    )}
+
+    {next ? (
+      <a
+        href={`/notes/${next.slug}`}
+        class="group flex flex-col items-end gap-1 rounded-lg border border-betich-light px-4 py-3 transition-colors hover:border-betich-dark"
+      >
+        <span class="font-mono text-xs text-gray-400 transition-colors group-hover:text-betich-dark">next →</span>
+        <span class="text-sm text-gray-700 text-right transition-colors group-hover:text-betich-dark">{next.data.title}</span>
+      </a>
+    ) : (
+      <div class="flex flex-col items-end gap-1 rounded-lg border border-gray-200 px-4 py-3 opacity-60 cursor-not-allowed">
+        <span class="font-mono text-xs text-gray-400">next →</span>
+        <span class="text-sm text-gray-500">nothing here</span>
+      </div>
+    )}
+  </nav>
+</SidebarLayout>
+
+<script>
+  const btn = document.getElementById("copy-link");
+  btn?.addEventListener("click", () => {
+    const url = btn.dataset.url ?? window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+      btn.title = "copied!";
+      setTimeout(() => (btn.title = "Copy link"), 2000);
+    });
+  });
+</script>

@@ -3,6 +3,7 @@ import SidebarLayout from "@/layouts/SidebarLayout.astro";
 import { getCollection } from "astro:content";
 import { FaRss } from "react-icons/fa";
 import { FiTwitter, FiLink, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { mdxToText } from "@/utils/sanitize";
 
 export async function getStaticPaths() {
   const notes = (await getCollection("notes", ({ data }) => !data.draft)).sort(
@@ -16,6 +17,7 @@ export async function getStaticPaths() {
 
 const { note, prev, next } = Astro.props;
 const { Content } = await note.render();
+const description = mdxToText(note.body);
 
 const pageUrl = new URL(`/notes/${note.slug}`, Astro.site).toString();
 const tweetUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(note.data.title)}&url=${encodeURIComponent(pageUrl)}`;
@@ -28,7 +30,7 @@ function formatDate(date: Date) {
 }
 ---
 
-<SidebarLayout currentPath="/notes" title={note.data.title}>
+<SidebarLayout currentPath="/notes" title={note.data.title} description={description}>
   <article class="prose prose-sm prose-gray max-w-none">
     <p class="not-prose mb-4 font-mono text-xs tracking-tight text-betich-dark">{formatDate(note.data.date)}</p>
     <h1 class="not-prose mb-6 font-mono text-xl font-bold text-betich-dark">{note.data.title}</h1>

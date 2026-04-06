@@ -2,7 +2,7 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { FiExternalLink } from "react-icons/fi";
 
-const { currentPath, prose: proseProp = false, frontmatter, ogImage, title } = Astro.props;
+const { currentPath, prose: proseProp = false, frontmatter, ogImage, title, description } = Astro.props;
 const prose = proseProp || frontmatter?.prose || false;
 const pathname = currentPath ?? Astro.url.pathname;
 
@@ -30,7 +30,7 @@ function isActive(href: string) {
 }
 ---
 
-<BaseLayout className="bg-white font-sans text-gray-900 antialiased" ogImage={resolveOgImage()} title={title ?? frontmatter?.title}>
+<BaseLayout className="bg-white font-sans text-gray-900 antialiased" ogImage={resolveOgImage()} title={title ?? frontmatter?.title} description={description ?? frontmatter?.description}>
   <div class="flex min-h-screen">
     <!-- Sidebar -->
     <nav

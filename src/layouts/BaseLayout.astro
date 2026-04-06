@@ -1,9 +1,10 @@
 ---
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/config";
 
-const { className, ogImage, title: pageTitle } = Astro.props;
+const { className, ogImage, title: pageTitle, description } = Astro.props;
 const resolvedOgImage = ogImage ?? "/og/about.png";
 const resolvedTitle = pageTitle ?? "betich";
+const resolvedDescription = description ?? SITE_DESCRIPTION;
 ---
 
 <html lang="en">
@@ -30,9 +31,9 @@ const resolvedTitle = pageTitle ?? "betich";
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>{resolvedTitle === "betich" ? SITE_TITLE : `${resolvedTitle} — ${SITE_TITLE}`}</title>
-    <meta name="description" content={SITE_DESCRIPTION} />
+    <meta name="description" content={resolvedDescription} />
     <meta property="og:title" content={resolvedTitle} />
-    <meta property="og:description" content={SITE_DESCRIPTION} />
+    <meta property="og:description" content={resolvedDescription} />
     <meta property="og:image" content={new URL(resolvedOgImage, Astro.site)} />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />

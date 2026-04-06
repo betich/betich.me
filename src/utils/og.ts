@@ -10,7 +10,15 @@ const fontBold = fs.readFileSync(
   path.resolve("node_modules/@fontsource/roboto-mono/files/roboto-mono-latin-700-normal.woff"),
 );
 
-export async function generateOgImage({ title, subtitle }: { title: string; subtitle?: string }) {
+export async function generateOgImage({
+  title,
+  description,
+  date,
+}: {
+  title: string;
+  description?: string;
+  date?: string;
+}) {
   const svg = await satori(
     {
       type: "div",
@@ -37,15 +45,16 @@ export async function generateOgImage({ title, subtitle }: { title: string; subt
               style: {
                 display: "flex",
                 flexDirection: "column",
-                padding: "64px 72px",
+                padding: "56px 72px",
                 flex: 1,
+                gap: "0px",
               },
               children: [
                 // betich.me top label
                 {
                   type: "div",
                   props: {
-                    style: { fontSize: 20, color: "#666", marginBottom: "auto" },
+                    style: { fontSize: 18, color: "#666", marginBottom: "auto" },
                     children: "betich.me",
                   },
                 },
@@ -54,31 +63,42 @@ export async function generateOgImage({ title, subtitle }: { title: string; subt
                   type: "div",
                   props: {
                     style: {
-                      fontSize: title.length > 40 ? 52 : 68,
+                      fontSize: title.length > 36 ? 48 : 64,
                       fontWeight: 700,
                       color: "#4845DA",
                       lineHeight: 1.15,
-                      marginBottom: subtitle ? "32px" : "0px",
+                      marginTop: "24px",
+                      marginBottom: description ? "20px" : "0px",
                     },
                     children: title,
                   },
                 },
-                // subtitle row
-                subtitle
+                // description
+                description
                   ? {
                       type: "div",
                       props: {
                         style: {
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
+                          fontSize: 22,
+                          color: "#6b7280",
+                          lineHeight: 1.5,
+                          marginBottom: "24px",
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
                         },
-                        children: [
-                          {
-                            type: "div",
-                            props: { style: { fontSize: 22, color: "#9ca3af" }, children: subtitle },
-                          },
-                        ],
+                        children: description,
+                      },
+                    }
+                  : null,
+                // date footer
+                date
+                  ? {
+                      type: "div",
+                      props: {
+                        style: { fontSize: 18, color: "#9ca3af" },
+                        children: date,
                       },
                     }
                   : null,

@@ -30,7 +30,7 @@ function formatDate(date: Date) {
 }
 ---
 
-<SidebarLayout currentPath="/notes" title={note.data.title} description={description}>
+<SidebarLayout currentPath="/notes" title={note.data.title} description={description} ogImage={`/og/${note.slug}.png`}>
   <article class="prose prose-sm prose-gray max-w-none">
     <p class="not-prose mb-4 font-mono text-xs tracking-tight text-betich-dark">{formatDate(note.data.date)}</p>
     <h1 class="not-prose mb-6 font-mono text-xl font-bold text-betich-dark">{note.data.title}</h1>

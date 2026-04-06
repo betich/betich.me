@@ -1,7 +1,9 @@
 ---
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/config";
 
-const className = Astro.props && Astro.props.className;
+const { className, ogImage, title: pageTitle } = Astro.props;
+const resolvedOgImage = ogImage ?? "/og/about.png";
+const resolvedTitle = pageTitle ?? "betich";
 ---
 
 <html lang="en">
@@ -27,8 +29,14 @@ const className = Astro.props && Astro.props.className;
     <meta name="theme-color" content="#ffffff" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <title>{SITE_TITLE}</title>
+    <title>{resolvedTitle === "betich" ? SITE_TITLE : `${resolvedTitle} — ${SITE_TITLE}`}</title>
     <meta name="description" content={SITE_DESCRIPTION} />
+    <meta property="og:title" content={resolvedTitle} />
+    <meta property="og:description" content={SITE_DESCRIPTION} />
+    <meta property="og:image" content={new URL(resolvedOgImage, Astro.site)} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={new URL(resolvedOgImage, Astro.site)} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Roboto+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />

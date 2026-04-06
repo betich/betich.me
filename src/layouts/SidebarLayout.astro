@@ -2,9 +2,21 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { FiExternalLink } from "react-icons/fi";
 
-const { currentPath, prose: proseProp = false, frontmatter } = Astro.props;
+const { currentPath, prose: proseProp = false, frontmatter, ogImage, title } = Astro.props;
 const prose = proseProp || frontmatter?.prose || false;
 const pathname = currentPath ?? Astro.url.pathname;
+
+// derive OG image from pathname if not explicitly provided
+function resolveOgImage() {
+  if (ogImage) return ogImage;
+  if (pathname.startsWith("/projects")) return "/og/projects.png";
+  if (pathname.startsWith("/notes/") && pathname !== "/notes/") {
+    const slug = pathname.replace("/notes/", "").replace(/\/$/, "");
+    return `/og/${slug}.png`;
+  }
+  if (pathname.startsWith("/notes")) return "/og/notes.png";
+  return "/og/about.png";
+}
 
 const nav = [
   { label: "about", href: "/about" },
@@ -18,7 +30,7 @@ function isActive(href: string) {
 }
 ---
 
-<BaseLayout className="bg-white font-sans text-gray-900 antialiased">
+<BaseLayout className="bg-white font-sans text-gray-900 antialiased" ogImage={resolveOgImage()} title={title ?? frontmatter?.title}>
   <div class="flex min-h-screen">
     <!-- Sidebar -->
     <nav

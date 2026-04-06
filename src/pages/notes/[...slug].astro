@@ -2,7 +2,7 @@
 import SidebarLayout from "@/layouts/SidebarLayout.astro";
 import { getCollection } from "astro:content";
 import { FaRss } from "react-icons/fa";
-import { FiTwitter, FiLink } from "react-icons/fi";
+import { FiTwitter, FiLink, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 export async function getStaticPaths() {
   const notes = (await getCollection("notes", ({ data }) => !data.draft)).sort(
@@ -28,7 +28,7 @@ function formatDate(date: Date) {
 }
 ---
 
-<SidebarLayout currentPath="/notes">
+<SidebarLayout currentPath="/notes" title={note.data.title}>
   <article class="prose prose-sm prose-gray max-w-none">
     <p class="not-prose mb-4 font-mono text-xs tracking-tight text-betich-dark">{formatDate(note.data.date)}</p>
     <h1 class="not-prose mb-6 font-mono text-xl font-bold text-betich-dark">{note.data.title}</h1>
@@ -73,12 +73,12 @@ function formatDate(date: Date) {
         href={`/notes/${prev.slug}`}
         class="group flex flex-col gap-1 rounded-lg border border-betich-light px-4 py-3 transition-colors hover:border-betich-dark"
       >
-        <span class="font-mono text-xs text-gray-400 transition-colors group-hover:text-betich-dark">← previous</span>
+        <span class="flex items-center gap-1 font-mono text-xs text-gray-400 transition-colors group-hover:text-betich-dark"><FiChevronLeft client:load className="h-3 w-3" /> previous</span>
         <span class="text-sm text-gray-700 transition-colors group-hover:text-betich-dark">{prev.data.title}</span>
       </a>
     ) : (
       <div class="flex flex-col gap-1 rounded-lg border border-gray-200 px-4 py-3 opacity-60 cursor-not-allowed">
-        <span class="font-mono text-xs text-gray-400">← previous</span>
+        <span class="flex items-center gap-1 font-mono text-xs text-gray-400"><FiChevronLeft client:load className="h-3 w-3" /> previous</span>
         <span class="text-sm text-gray-500">nothing here</span>
       </div>
     )}
@@ -88,12 +88,12 @@ function formatDate(date: Date) {
         href={`/notes/${next.slug}`}
         class="group flex flex-col items-end gap-1 rounded-lg border border-betich-light px-4 py-3 transition-colors hover:border-betich-dark"
       >
-        <span class="font-mono text-xs text-gray-400 transition-colors group-hover:text-betich-dark">next →</span>
+        <span class="flex items-center gap-1 font-mono text-xs text-gray-400 transition-colors group-hover:text-betich-dark">next <FiChevronRight client:load className="h-3 w-3" /></span>
         <span class="text-sm text-gray-700 text-right transition-colors group-hover:text-betich-dark">{next.data.title}</span>
       </a>
     ) : (
       <div class="flex flex-col items-end gap-1 rounded-lg border border-gray-200 px-4 py-3 opacity-60 cursor-not-allowed">
-        <span class="font-mono text-xs text-gray-400">next →</span>
+        <span class="flex items-center gap-1 font-mono text-xs text-gray-400">next <FiChevronRight client:load className="h-3 w-3" /></span>
         <span class="text-sm text-gray-500">nothing here</span>
       </div>
     )}

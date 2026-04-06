@@ -42,7 +42,7 @@ export const projectsByYear: ProjectYear[] = [
       {
         name: "intania jukebox",
         emoji: "🔊",
-        description: "Web-based music player powered by Raspberry Pi.",
+        description: "Web-based music player, powered by raspberry pi and Spotify API.",
         url: "https://github.com/betich/intania-jukebox",
       },
     ],
@@ -50,6 +50,12 @@ export const projectsByYear: ProjectYear[] = [
   {
     year: 2024,
     projects: [
+      {
+        name: "color guessor toy",
+        emoji: "🎨",
+        description: "Project for \"Robotics Project II\" subject of the Robotics AI program, in collaboration with students from the Industrial Design program, Faculty of Architecture.",
+        url: "https://github.com/betich/robo2-color-guessor",
+      },
       {
         name: "junior webmaster camp 13",
         emoji: "💖",
@@ -90,7 +96,7 @@ export const projectsByYear: ProjectYear[] = [
       {
         name: "ped4you",
         emoji: "🦆",
-        description: "Election information website with a simulator and ML-powered ballot validator. Used by 10k+ users.",
+        description: "ช่วยทุกคนกาบัตรเลือกตั้งของตัวเองได้อย่างมั่นใจ — An interactive website that provides information about the 2023 Election, including an Election Simulator, a game that guides you through the process of the election. Integrated with a machine learning model that asseses if the election ballot is valid or not.",
         url: "https://github.com/PED4you/ped4you-website",
         live: "https://ped4you.com",
       },
@@ -135,7 +141,7 @@ export const projectsByYear: ProjectYear[] = [
       {
         name: "tcas exam schedule generator",
         emoji: "📕",
-        description: "Generates a study and exam schedule for university applicants in Thailand.",
+        description: "A website for generating a study and exam schedule for students who are applying for universities in Thailand, the website gained a small traction via twitter and my friends.",
         url: "https://github.com/betich/tcas3-schedule-generator",
         live: "https://tcas.betich.me",
       },

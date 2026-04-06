@@ -15,17 +15,17 @@ function resolveOgImage() {
     return `/og/${slug}.png`;
   }
   if (pathname.startsWith("/notes")) return "/og/notes.png";
-  return "/og/about.png";
+  return "/og/about.png"; // "/" and "/about" both fall through here
 }
 
 const nav = [
-  { label: "about", href: "/about" },
+  { label: "about", href: "/" },
   { label: "projects", href: "/projects" },
   { label: "notes", href: "/notes" },
 ];
 
 function isActive(href: string) {
-  if (href === "/about") return pathname === "/" || pathname === "/about" || pathname.startsWith("/about");
+  if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(href + "/");
 }
 ---

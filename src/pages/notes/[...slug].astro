@@ -46,15 +46,15 @@ function formatDate(date: Date) {
       href={tweetUrl}
       target="_blank"
       rel="noopener noreferrer"
-      class="text-gray-400 transition-colors hover:text-betich-dark"
-      title="Share on X"
+      class="tooltip text-gray-400 transition-colors hover:text-betich-dark"
+      data-tip="Share on X"
     >
       <FiTwitter client:load className="h-4 w-4" />
     </a>
     <button
       id="copy-link"
-      class="text-gray-400 transition-colors hover:text-betich-dark"
-      title="Copy link"
+      class="tooltip text-gray-400 transition-colors hover:text-betich-dark"
+      data-tip="Copy link"
       data-url={pageUrl}
     >
       <FiLink client:load className="h-4 w-4" />
@@ -63,8 +63,8 @@ function formatDate(date: Date) {
       href="/feed.xml"
       target="_blank"
       rel="noopener noreferrer"
-      class="ml-auto text-gray-400 transition-colors hover:text-betich-dark"
-      title="RSS feed"
+      class="tooltip ml-auto text-gray-400 transition-colors hover:text-betich-dark"
+      data-tip="RSS feed"
     >
       <FaRss client:load className="h-4 w-4" />
     </a>
@@ -75,7 +75,9 @@ function formatDate(date: Date) {
     {prev ? (
       <a
         href={`/notes/${prev.slug}`}
-        class="group flex flex-col gap-1 rounded-lg border border-betich-light px-4 py-3 transition-colors hover:border-betich-dark"
+        class="tooltip group flex flex-col gap-1 rounded-lg border border-betich-light px-4 py-3 transition-colors hover:border-betich-dark"
+        data-tip={prev.data.title}
+        data-tip-pos="top-left"
       >
         <span class="flex items-center gap-1 font-mono text-xs text-gray-400 transition-colors group-hover:text-betich-dark"><FiChevronLeft client:load className="h-3 w-3" /> previous</span>
         <span class="text-sm text-gray-700 transition-colors group-hover:text-betich-dark">{prev.data.title}</span>
@@ -90,7 +92,9 @@ function formatDate(date: Date) {
     {next ? (
       <a
         href={`/notes/${next.slug}`}
-        class="group flex flex-col items-end gap-1 rounded-lg border border-betich-light px-4 py-3 transition-colors hover:border-betich-dark"
+        class="tooltip group flex flex-col items-end gap-1 rounded-lg border border-betich-light px-4 py-3 transition-colors hover:border-betich-dark"
+        data-tip={next.data.title}
+        data-tip-pos="top-right"
       >
         <span class="flex items-center gap-1 font-mono text-xs text-gray-400 transition-colors group-hover:text-betich-dark">next <FiChevronRight client:load className="h-3 w-3" /></span>
         <span class="text-sm text-gray-700 text-right transition-colors group-hover:text-betich-dark">{next.data.title}</span>
@@ -104,13 +108,76 @@ function formatDate(date: Date) {
   </nav>
 </SidebarLayout>
 
+<!-- Toast -->
+<div id="toast" aria-live="polite">Link copied!</div>
+
+<style>
+  /* Tooltip */
+  .tooltip {
+    position: relative;
+  }
+  .tooltip::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    background: #1f2937;
+    color: #fff;
+    font-size: 11px;
+    font-family: "Roboto Mono", monospace;
+    padding: 3px 8px;
+    border-radius: 4px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+  .tooltip[data-tip-pos="top-left"]::after {
+    left: 0;
+    transform: none;
+  }
+  .tooltip[data-tip-pos="top-right"]::after {
+    left: auto;
+    right: 0;
+    transform: none;
+  }
+  .tooltip:hover::after {
+    opacity: 1;
+  }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #1f2937;
+    color: #fff;
+    font-size: 12px;
+    font-family: "Roboto Mono", monospace;
+    padding: 8px 16px;
+    border-radius: 6px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 50;
+  }
+  #toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
 <script>
   const btn = document.getElementById("copy-link");
+  const toast = document.getElementById("toast");
+
   btn?.addEventListener("click", () => {
-    const url = btn.dataset.url ?? window.location.href;
+    const url = (btn as HTMLButtonElement).dataset.url ?? window.location.href;
     navigator.clipboard.writeText(url).then(() => {
-      btn.title = "copied!";
-      setTimeout(() => (btn.title = "Copy link"), 2000);
+      toast?.classList.add("show");
+      setTimeout(() => toast?.classList.remove("show"), 2000);
     });
   });
 </script>

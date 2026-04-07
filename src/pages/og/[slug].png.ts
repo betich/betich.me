@@ -18,7 +18,7 @@ export async function getStaticPaths() {
 export const GET: APIRoute = async ({ props }) => {
   const { title, date, description } = props as { title: string; date: Date; description: string };
 
-  const formatted = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
+  const formatted = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 
   const png = await generateOgImage({ title, description, date: formatted });
 

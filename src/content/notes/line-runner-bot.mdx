@@ -1,0 +1,35 @@
+---
+title: "LINE Runner Bot"
+date: 2026-04-06T19:48:00
+---
+
+So I had some free time in the weekend to cook up something, thus this project was born.
+
+I made a [LINE Bot](https://developers.line.biz/en/docs/messaging-api/overview/) that keeps track of things particular statistics for my friend's runner group. The bot keeps track of two metrics - first one being the number of kilometers ran by each member, and the econd one being the number of times they have bailed out of running appointments (or as we call it in Thailand — "บิด"). Nothing grand - just a week-end project for some light-hearted jabbing with friends.
+
+The bot is build using Node.js in the bun runtime, with a minimal express server to handle webhook requests and a simple health check. Data is stored in an SQLite database, and the bot uses LINE Messaging API to respond to user commands.
+
+Example commands include:
+
+- `ช่วยด้วย` - to show the help message
+- `ผมบิดคับ` - to self-report a bail-out
+- `@metion บิดคับ` - to record a bail-out
+- `/km` - show the kilometers leaderboard
+- `/bid` - show the bail-out leaderboard
+
+<div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+  <img src="/images/notes/line-runner-bot/km-leaderboard.png" alt="KM Leaderboard" style={{ width: "100%" }} />
+  <img src="/images/notes/line-runner-bot/bid-leaderboard.png" alt="Bid Leaderboard" style={{ width: "100%" }} />
+  <img src="/images/notes/line-runner-bot/help.png" alt="Help" style={{ width: "100%" }} />
+  <img src="/images/notes/line-runner-bot/ocr.png" alt="Strava Screenshot" style={{ width: "100%" }} />
+</div>
+
+KMs are logged when a user sends a running screenshot — typically from strava — and is parsed by Tesseract OCR to extract the distance ran.
+
+I deployed the bot on my local Raspberry Pi with a simple `rsync` script to push updates, and building there directly and I make the project run on the background using the system daemon `systemctl`. Although I can setup some kind of CI to do that for me or even containerize it, doing it like this is fine for now I guess.
+
+While this was made as a fun project (admittedly mainly build using coding agents), I can see myself updating this bot with new features and sharing it with new running groups in the future. Ideas like a web UI, better OCR, local LLM integrations — while they seem kinda overkill — still sounds like a lot of fun to me!
+
+Check out the project at: [github.com/betich/runner-bot](https://github.com/betich/runner-bot) and feel free to set it up for yourself or even contribute to the project! All is welcome ~
+
+_**Bonne semaine!**_

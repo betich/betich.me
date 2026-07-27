@@ -1,0 +1,255 @@
+---
+import SidebarLayout from "@/layouts/SidebarLayout.astro";
+import { slides, sections, PORTFOLIO_PDF, SLIDE_WIDTH, SLIDE_HEIGHT } from "@/data/portfolio";
+
+const description =
+  "Panithi Makthiengtrong's portfolio — robotics, embedded hardware, software engineering, graphic design, and marketing.";
+
+// only the payload the lightbox needs, not the whole module
+const lightboxData = slides.map(({ page, src, title, links }) => ({ page, src, title, links }));
+---
+
+<SidebarLayout wide title="portfolio" description={description}>
+  <header class="mb-8 max-w-2xl">
+    <h1 class="font-mono text-base font-bold text-betich-dark">portfolio</h1>
+    <p class="mt-3 text-sm leading-relaxed text-gray-600">
+      A selected body of work across robotics and embedded hardware, software engineering, and graphic design. Click any
+      slide to view it larger — links inside the deck are clickable.
+    </p>
+    <p class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-xs text-gray-400">
+      <span>{slides.length} slides</span>
+      <span aria-hidden="true">·</span>
+      <a class="text-betich-dark underline decoration-betich-light hover:decoration-betich-dark" href={PORTFOLIO_PDF} download>
+        download pdf
+      </a>
+    </p>
+  </header>
+
+  <nav aria-label="Sections" class="mb-10 flex flex-wrap gap-x-4 gap-y-1 border-y border-betich-light py-3">
+    {
+      sections.map((section) => (
+        <a
+          href={`#slide-${section.page}`}
+          class="font-mono text-xs text-gray-400 transition-colors hover:text-betich-dark"
+        >
+          {section.label}
+        </a>
+      ))
+    }
+  </nav>
+
+  <ol class="space-y-10">
+    {
+      slides.map((slide, i) => (
+        <li id={`slide-${slide.page}`} class="scroll-mt-6">
+          <figure>
+            <div
+              class="slide group relative cursor-zoom-in overflow-hidden border border-betich-light bg-white"
+              data-index={i}
+            >
+              <img
+                src={slide.src}
+                width={SLIDE_WIDTH}
+                height={SLIDE_HEIGHT}
+                alt={`Slide ${slide.page}: ${slide.title}`}
+                loading={i < 2 ? "eager" : "lazy"}
+                decoding="async"
+                class="block w-full"
+              />
+              {slide.links.map((link) => (
+                <a
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${link.label} (opens in a new tab)`}
+                  class="absolute z-10 rounded-[2px] bg-betich-dark/[0.07] transition-colors hover:bg-betich-dark/20"
+                  style={`left:${link.x}%;top:${link.y}%;width:${link.w}%;height:${link.h}%`}
+                />
+              ))}
+              <button
+                type="button"
+                class="slide-zoom absolute bottom-2 right-2 z-20 rounded border border-betich-light bg-white/90 px-2 py-1 font-mono text-[10px] text-gray-500 opacity-0 transition-opacity focus-visible:opacity-100 group-hover:opacity-100"
+                data-index={i}
+              >
+                enlarge
+              </button>
+            </div>
+            <figcaption class="mt-2 flex items-baseline gap-2 font-mono text-xs text-gray-400">
+              <span class="tabular-nums">{String(slide.page).padStart(2, "0")}</span>
+              <span class:list={[slide.divider ? "text-betich-dark" : "text-gray-500"]}>{slide.title}</span>
+            </figcaption>
+          </figure>
+        </li>
+      ))
+    }
+  </ol>
+
+  <script type="application/json" id="portfolio-data" set:html={JSON.stringify(lightboxData)} />
+
+  <!-- Lightbox -->
+  <div
+    id="lightbox"
+    class="fixed inset-0 z-50 hidden bg-white/[0.98] backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Slide viewer"
+  >
+    <div class="flex h-full flex-col">
+      <div class="flex shrink-0 items-center justify-between border-b border-betich-light px-4 py-2 font-mono text-xs">
+        <span id="lb-caption" class="min-w-0 truncate text-gray-500"></span>
+        <div class="flex shrink-0 items-center gap-3">
+          <button type="button" id="lb-prev" class="text-gray-400 hover:text-betich-dark" aria-label="Previous slide">
+            ←
+          </button>
+          <span id="lb-counter" class="tabular-nums text-gray-400"></span>
+          <button type="button" id="lb-next" class="text-gray-400 hover:text-betich-dark" aria-label="Next slide">
+            →
+          </button>
+          <button type="button" id="lb-close" class="ml-2 text-gray-400 hover:text-betich-dark" aria-label="Close viewer">
+            esc
+          </button>
+        </div>
+      </div>
+      <div id="lb-scroll" class="flex-1 overflow-auto p-2 sm:p-4">
+        <div id="lb-stage" class="relative mx-auto">
+          <img id="lb-img" alt="" class="block h-auto w-full" />
+        </div>
+      </div>
+      <p class="shrink-0 px-4 py-2 text-center font-mono text-[10px] text-gray-300">
+        tap the slide to zoom · arrow keys to navigate
+      </p>
+    </div>
+  </div>
+</SidebarLayout>
+
+<script>
+  interface Hotspot {
+    href: string;
+    label: string;
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  }
+  interface SlideData {
+    page: number;
+    src: string;
+    title: string;
+    links: Hotspot[];
+  }
+
+  const dataEl = document.getElementById("portfolio-data");
+  const lightbox = document.getElementById("lightbox");
+  const stage = document.getElementById("lb-stage");
+  const img = document.getElementById("lb-img") as HTMLImageElement | null;
+  const scroller = document.getElementById("lb-scroll");
+  const caption = document.getElementById("lb-caption");
+  const counter = document.getElementById("lb-counter");
+
+  if (dataEl && lightbox && stage && img && scroller && caption && counter) {
+    const slides: SlideData[] = JSON.parse(dataEl.textContent || "[]");
+    let current = 0;
+    let zoomed = false;
+    // remembers what to scroll back to, so closing lands you where you were
+    let lastTrigger: HTMLElement | null = null;
+
+    function applyZoom() {
+      if (zoomed) {
+        // full native width, scrollable — the only way dense slides stay legible on a phone
+        stage!.style.width = "1920px";
+        stage!.style.maxWidth = "none";
+      } else {
+        // fit whole slide in view: cap width by the height the chrome leaves us (16:9)
+        stage!.style.width = "";
+        stage!.style.maxWidth = "min(100%, calc((100vh - 7rem) * 16 / 9))";
+      }
+      img!.style.cursor = zoomed ? "zoom-out" : "zoom-in";
+      if (!zoomed) scroller!.scrollTo(0, 0);
+    }
+
+    function render() {
+      const slide = slides[current];
+      img!.src = slide.src;
+      img!.alt = `Slide ${slide.page}: ${slide.title}`;
+      caption!.textContent = slide.title;
+      counter!.textContent = `${slide.page} / ${slides.length}`;
+
+      // rebuild hotspots for this slide
+      stage!.querySelectorAll("a.lb-hotspot").forEach((el) => el.remove());
+      for (const link of slide.links) {
+        const a = document.createElement("a");
+        a.className =
+          "lb-hotspot absolute rounded-[2px] bg-betich-dark/[0.07] transition-colors hover:bg-betich-dark/20";
+        a.href = link.href;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.setAttribute("aria-label", `${link.label} (opens in a new tab)`);
+        a.style.cssText = `left:${link.x}%;top:${link.y}%;width:${link.w}%;height:${link.h}%`;
+        stage!.appendChild(a);
+      }
+    }
+
+    function open(index: number, trigger: HTMLElement | null) {
+      current = index;
+      zoomed = false;
+      lastTrigger = trigger;
+      render();
+      applyZoom();
+      lightbox!.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+      (document.getElementById("lb-close") as HTMLButtonElement | null)?.focus();
+    }
+
+    function close() {
+      lightbox!.classList.add("hidden");
+      document.body.style.overflow = "";
+      // keep the page in sync with wherever the viewer ended up
+      const target = document.getElementById(`slide-${slides[current].page}`);
+      if (target && target !== lastTrigger?.closest("li")) {
+        target.scrollIntoView({ block: "start" });
+      }
+    }
+
+    function go(delta: number) {
+      current = (current + delta + slides.length) % slides.length;
+      zoomed = false;
+      render();
+      applyZoom();
+    }
+
+    // open from the slide surface, but never swallow clicks meant for a hotspot link
+    document.querySelectorAll<HTMLElement>(".slide").forEach((el) => {
+      el.addEventListener("click", (event) => {
+        if ((event.target as HTMLElement).closest("a")) return;
+        open(Number(el.dataset.index), el);
+      });
+    });
+    document.querySelectorAll<HTMLElement>(".slide-zoom").forEach((el) => {
+      el.addEventListener("click", (event) => {
+        event.stopPropagation();
+        open(Number(el.dataset.index), el);
+      });
+    });
+
+    img.addEventListener("click", () => {
+      zoomed = !zoomed;
+      applyZoom();
+    });
+
+    document.getElementById("lb-prev")?.addEventListener("click", () => go(-1));
+    document.getElementById("lb-next")?.addEventListener("click", () => go(1));
+    document.getElementById("lb-close")?.addEventListener("click", close);
+    lightbox.addEventListener("click", (event) => {
+      if (event.target === lightbox) close();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (lightbox.classList.contains("hidden")) return;
+      if (event.key === "Escape") close();
+      else if (event.key === "ArrowRight") go(1);
+      else if (event.key === "ArrowLeft") go(-1);
+      else return;
+      event.preventDefault();
+    });
+  }
+</script>

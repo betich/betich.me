@@ -2,8 +2,9 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { FiExternalLink } from "react-icons/fi";
 
-const { currentPath, prose: proseProp = false, frontmatter, ogImage, title, description } = Astro.props;
+const { currentPath, prose: proseProp = false, wide: wideProp = false, frontmatter, ogImage, title, description } = Astro.props;
 const prose = proseProp || frontmatter?.prose || false;
+const wide = wideProp || frontmatter?.wide || false;
 const pathname = currentPath ?? Astro.url.pathname;
 
 // derive OG image from pathname if not explicitly provided
@@ -15,12 +16,14 @@ function resolveOgImage() {
     return `/og/${slug}.png`;
   }
   if (pathname.startsWith("/notes")) return "/og/notes.png";
+  if (pathname.startsWith("/portfolio")) return "/og/portfolio.png";
   return "/og/about.png"; // "/" and "/about" both fall through here
 }
 
 const nav = [
   { label: "about", href: "/" },
   { label: "projects", href: "/projects" },
+  { label: "portfolio", href: "/portfolio" },
   { label: "notes", href: "/notes" },
 ];
 
@@ -62,7 +65,7 @@ function isActive(href: string) {
     </nav>
 
     <!-- Content -->
-    <main class="min-w-0 max-w-4xl flex-1 px-5 pb-16 pt-8 sm:px-8 sm:pt-12 md:px-12 md:pt-16">
+    <main class:list={["min-w-0 flex-1 px-5 pb-16 pt-8 sm:px-8 sm:pt-12 md:px-12 md:pt-16", wide ? "max-w-[1600px]" : "max-w-4xl"]}>
       <div class:list={["content-fade", prose && "prose prose-sm prose-gray max-w-none"]}>
         <slot />
       </div>

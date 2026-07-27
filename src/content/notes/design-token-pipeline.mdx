@@ -1,0 +1,59 @@
+---
+title: "Turning design tokens into a design system"
+date: 2026-07-27T21:30:00
+---
+
+Around the middle of last year, my team and I were building a design system at work — an extensive one, with components changing every week. The UX/UI team handed us design tokens in the [DTCG](https://tr.designtokens.org/format/) format, Tailwind v4 had just come out, and we had to figure out how to get from one to the other.
+
+I've since rewritten the gist of that system as a public repo, mostly so I could talk about it without talking about work: [github.com/betich/design-tokens](https://github.com/betich/design-tokens).
+
+---
+
+The whole thing is really two builders stacked on top of each other.
+
+**The first one turns token JSON into CSS.** [Style Dictionary](https://styledictionary.com/) does most of the heavy lifting, but at the time it had no idea what Tailwind v4 was. Tailwind v4 derives its utilities from the _namespace_ a custom property lives in — `--color-*` gives you `bg-*` and `text-*`, `--spacing-*` gives you `h-*` and `p-*`, and a property that isn't in a namespace gives you nothing at all. So a token named `component.button.primary.bg.default` is useless until something renames it:
+
+```
+component.button.primary.bg.default  →  --color-button-primary-bg-default
+                                     →  bg-button-primary-bg-default
+component.button.size.md.height      →  --spacing-button-size-md-height
+                                     →  h-button-size-md-height
+```
+
+That renaming is a Style Dictionary transform, and writing it was the part I enjoyed most — you're handed one token at a time and you decide what it becomes. Border widths are the funny exception: Tailwind has no `--border-width-*` namespace, so those keep their plain names and get read directly. The whole transform is about thirty lines: [`.sd/transforms/tailwindVarReference.ts`](https://github.com/betich/design-tokens/blob/main/.sd/transforms/tailwindVarReference.ts).
+
+There's a [Tailwind v4 transformer for Style Dictionary now](https://github.com/tokens-studio/sd-tailwindv4). There wasn't one when we needed it, so we read the CSS and SCSS transformers and built ours from those. I'm still fond of it.
+
+**The second one turns components into a registry.** shadcn's CLI isn't really a component library — it's a very smart file copier that knows about your project's structure. You point it at a JSON file describing a component and it writes the files into the right places. The docs for that are [here](https://ui.shadcn.com/docs/registry).
+
+Writing those JSON descriptions by hand was never going to survive a design system that changes weekly. So instead, every component gets a `Component.registry.ts` sitting next to it, and the build globs for those and assembles the registry:
+
+```ts
+export default defineRegistryItem({
+  name: 'button',
+  type: 'registry:component',
+  title: 'Button',
+  description: 'A button with four variants and three sizes.',
+  categories: ['atoms'],
+  files: [...],
+  dependencies: [...commonDependencies, '@radix-ui/react-slot'],
+})
+```
+
+`defineRegistryItem` is a [zod](https://zod.dev/) parse plus a transformation — it validates the metadata against the registry schema, and rewrites the component's dependencies from bare names into absolute URLs so that pulling `card` also pulls _our_ `button` instead of upstream shadcn's. That's [`src/.registry/build.ts`](https://github.com/betich/design-tokens/blob/main/src/.registry/build.ts), with the schemas in [`types.ts`](https://github.com/betich/design-tokens/blob/main/src/.registry/types.ts).
+
+Discovery being a glob rather than a list matters more than it sounds. Adding a component means adding one file next to it — there's no central manifest to forget to update, and the build fails loudly if the metadata is wrong rather than silently publishing something broken.
+
+---
+
+The technical part was honestly the easy half. The harder half was getting everyone to agree on what a `Component.registry.ts` should look like in the first place — where it lives, what's required, who writes the description. That ended up as an internal document, and the document was more work than the parser.
+
+I think that's the thing I keep learning. The code enforces a standard; it doesn't create one. `zod` is a lovely way to write the enforcement down — the schema _is_ the spec, and it's a spec that fails your build — but somebody still has to have the conversation first.
+
+Here's the [whiteboard I used to present the research](https://excalidraw.com/#json=QyWfa5bIQGajVx-6SQB7K,KjGc1cYK-LT-LQEHfLurFw), which is a bit of a mess but an honest one.
+
+---
+
+This is a front-end heavy project, and I'm aware of it. But almost none of what I liked about it was front-end: it was reading a spec, deciding on a data model, writing the parser, and setting up the CLI around it. That's the part of programming I keep coming back to — researching a problem nobody on the team has solved before, and building the system that solves it.
+
+_**Bonne semaine!**_

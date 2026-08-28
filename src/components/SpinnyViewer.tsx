@@ -102,7 +102,6 @@ export default function SpinnyViewer() {
   function handleTouchMove(event: React.TouchEvent<HTMLDivElement>) {
     const touch = event.touches[0];
     if (!drag.current.active || !touch) return;
-    event.preventDefault();
 
     const elapsed = Math.max(event.timeStamp - drag.current.previousTime, 1);
     const distance = touch.clientX - drag.current.previousX;
@@ -115,7 +114,6 @@ export default function SpinnyViewer() {
   function handleTouchEnd(event: React.TouchEvent<HTMLDivElement>) {
     if (!drag.current.active) return;
     drag.current.active = false;
-    event.preventDefault();
     animateInertia();
   }
 

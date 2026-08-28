@@ -12,13 +12,58 @@ function wrapFrame(frame: number) {
 
 export default function SpinnyViewer() {
   const [displayedPosition, setDisplayedPosition] = useState(0);
+  const viewerRef = useRef<HTMLDivElement>(null);
   const position = useRef(0);
   const velocity = useRef(0);
   const animationFrame = useRef<number | null>(null);
   const drag = useRef({ active: false, startX: 0, startPosition: 0, previousX: 0, previousTime: 0 });
 
   useEffect(() => {
+    const viewer = viewerRef.current;
+    if (!viewer) return;
+
+    const handleTouchStart = (event: TouchEvent) => {
+      const touch = event.touches[0];
+      if (!touch) return;
+      stopInertia();
+      drag.current = {
+        active: true,
+        startX: touch.clientX,
+        startPosition: position.current,
+        previousX: touch.clientX,
+        previousTime: event.timeStamp,
+      };
+    };
+
+    const handleTouchMove = (event: TouchEvent) => {
+      const touch = event.touches[0];
+      if (!drag.current.active || !touch) return;
+      event.preventDefault();
+
+      const elapsed = Math.max(event.timeStamp - drag.current.previousTime, 1);
+      const distance = touch.clientX - drag.current.previousX;
+      velocity.current = -distance / FRAME_STEP_DISTANCE / elapsed;
+      renderPosition(drag.current.startPosition + (drag.current.startX - touch.clientX) / FRAME_STEP_DISTANCE);
+      drag.current.previousX = touch.clientX;
+      drag.current.previousTime = event.timeStamp;
+    };
+
+    const handleTouchEnd = () => {
+      if (!drag.current.active) return;
+      drag.current.active = false;
+      animateInertia();
+    };
+
+    viewer.addEventListener("touchstart", handleTouchStart, { passive: true });
+    viewer.addEventListener("touchmove", handleTouchMove, { passive: false });
+    viewer.addEventListener("touchend", handleTouchEnd, { passive: true });
+    viewer.addEventListener("touchcancel", handleTouchEnd, { passive: true });
+
     return () => {
+      viewer.removeEventListener("touchstart", handleTouchStart);
+      viewer.removeEventListener("touchmove", handleTouchMove);
+      viewer.removeEventListener("touchend", handleTouchEnd);
+      viewer.removeEventListener("touchcancel", handleTouchEnd);
       if (animationFrame.current !== null) cancelAnimationFrame(animationFrame.current);
     };
   }, []);
@@ -86,40 +131,8 @@ export default function SpinnyViewer() {
     animateInertia();
   }
 
-  function handleTouchStart(event: React.TouchEvent<HTMLDivElement>) {
-    const touch = event.touches[0];
-    if (!touch) return;
-    stopInertia();
-    drag.current = {
-      active: true,
-      startX: touch.clientX,
-      startPosition: position.current,
-      previousX: touch.clientX,
-      previousTime: event.timeStamp,
-    };
-  }
-
-  function handleTouchMove(event: React.TouchEvent<HTMLDivElement>) {
-    const touch = event.touches[0];
-    if (!drag.current.active || !touch) return;
-
-    const elapsed = Math.max(event.timeStamp - drag.current.previousTime, 1);
-    const distance = touch.clientX - drag.current.previousX;
-    velocity.current = -distance / FRAME_STEP_DISTANCE / elapsed;
-    renderPosition(drag.current.startPosition + (drag.current.startX - touch.clientX) / FRAME_STEP_DISTANCE);
-    drag.current.previousX = touch.clientX;
-    drag.current.previousTime = event.timeStamp;
-  }
-
-  function handleTouchEnd(event: React.TouchEvent<HTMLDivElement>) {
-    if (!drag.current.active) return;
-    drag.current.active = false;
-    animateInertia();
-  }
-
   function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-    event.preventDefault();
     stopInertia();
     renderPosition(position.current + (event.key === "ArrowLeft" ? 1 : -1));
   }
@@ -130,6 +143,7 @@ export default function SpinnyViewer() {
 
   return (
     <div
+      ref={viewerRef}
       className="spinny-viewer"
       role="application"
       aria-label="Interactive rotating portrait. Drag or swipe horizontally to turn."
@@ -139,10 +153,6 @@ export default function SpinnyViewer() {
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      onTouchCancel={handleTouchEnd}
     >
       <div className="spinny-stage">
         <img src={frames[frame]} alt="Thee wearing a traditional white and gold outfit" draggable={false} />

@@ -51,6 +51,7 @@ export default function SpinnyViewer() {
   }
 
   function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {
+    if (event.pointerType === "touch") return;
     if (event.pointerType === "mouse" && event.button !== 0) return;
     stopInertia();
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -64,6 +65,7 @@ export default function SpinnyViewer() {
   }
 
   function handlePointerMove(event: React.PointerEvent<HTMLDivElement>) {
+    if (event.pointerType === "touch") return;
     if (!drag.current.active) return;
 
     const elapsed = Math.max(event.timeStamp - drag.current.previousTime, 1);
@@ -75,11 +77,45 @@ export default function SpinnyViewer() {
   }
 
   function handlePointerUp(event: React.PointerEvent<HTMLDivElement>) {
+    if (event.pointerType === "touch") return;
     if (!drag.current.active) return;
     drag.current.active = false;
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
+    animateInertia();
+  }
+
+  function handleTouchStart(event: React.TouchEvent<HTMLDivElement>) {
+    const touch = event.touches[0];
+    if (!touch) return;
+    stopInertia();
+    drag.current = {
+      active: true,
+      startX: touch.clientX,
+      startPosition: position.current,
+      previousX: touch.clientX,
+      previousTime: event.timeStamp,
+    };
+  }
+
+  function handleTouchMove(event: React.TouchEvent<HTMLDivElement>) {
+    const touch = event.touches[0];
+    if (!drag.current.active || !touch) return;
+    event.preventDefault();
+
+    const elapsed = Math.max(event.timeStamp - drag.current.previousTime, 1);
+    const distance = touch.clientX - drag.current.previousX;
+    velocity.current = -distance / FRAME_STEP_DISTANCE / elapsed;
+    renderPosition(drag.current.startPosition + (drag.current.startX - touch.clientX) / FRAME_STEP_DISTANCE);
+    drag.current.previousX = touch.clientX;
+    drag.current.previousTime = event.timeStamp;
+  }
+
+  function handleTouchEnd(event: React.TouchEvent<HTMLDivElement>) {
+    if (!drag.current.active) return;
+    drag.current.active = false;
+    event.preventDefault();
     animateInertia();
   }
 
@@ -105,6 +141,10 @@ export default function SpinnyViewer() {
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
     >
       <div className="spinny-stage">
         <img src={frames[frame]} alt="Thee wearing a traditional white and gold outfit" draggable={false} />

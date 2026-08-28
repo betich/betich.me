@@ -1,0 +1,63 @@
+body {
+  margin: 0;
+}
+
+.spinny-viewer {
+  align-items: center;
+  background: #fff;
+  cursor: grab;
+  display: flex;
+  height: 52dvh;
+  justify-content: center;
+  outline: none;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  width: 100%;
+}
+
+.spinny-viewer:active {
+  cursor: grabbing;
+}
+
+.spinny-viewer:focus-visible {
+  box-shadow: inset 0 0 0 3px #4845da;
+}
+
+.spinny-stage {
+  aspect-ratio: 440 / 502;
+  height: min(52dvh, 177.7778vw);
+  max-height: 100%;
+  max-width: 100%;
+  position: relative;
+  transform: translateY(-3dvh);
+  width: auto;
+}
+
+.spinny-stage img {
+  display: block;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  transform: scale(1.5);
+  width: 100%;
+}
+
+.spinny-stage img + img {
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+
+.spinny-preload {
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  width: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinny-viewer {
+    scroll-behavior: auto;
+  }
+}

@@ -1,11 +1,17 @@
 ---
 layout: "@/layouts/SidebarLayout.astro"
 prose: true
+wide: true
 description: "Hi, my name is Thee (Panithi Makthiengtrong). I'm a Robotics and Artificial Intelligence student at Chulalongkorn University, Bangkok, Thailand. I build things for the web."
 ---
 
-import WebRings from "@/components/WebRings.astro";
+import SpinnyViewer from "@/components/SpinnyViewer";
 import SocialLinks from "@/components/SocialLinks.astro";
+import WebRings from "@/components/WebRings.astro";
+
+<SpinnyViewer client:load />
+
+<section class="landing-content prose prose-sm prose-gray mx-auto max-w-4xl px-5 pb-16 pt-8 sm:px-8 sm:pt-12 md:px-12">
 
 # betich
 
@@ -15,7 +21,7 @@ I'm a Robotics and Artificial Intelligence student at Chulalongkorn University, 
 
 I started making websites in 2019 when I was 15 years old. Ever since then, I've developed a passion in building things — whether it'd be developing or designing digital products that solves problems and sharing about my experiences and learnings.
 
-Feel free to look around at my [projects](/projects), or find me on [GitHub](https://github.com/betich). Contact me if you want to chat!
+Feel free to look around at my [projects](/projects), flip through my [portfolio](/portfolio) — a deck of selected work across robotics, software and design — or find me on [GitHub](https://github.com/betich). Contact me if you want to chat!
 
 <SocialLinks />
 
@@ -24,3 +30,5 @@ Feel free to look around at my [projects](/projects), or find me on [GitHub](htt
 <WebRings />
 
 **[source](https://github.com/betich/betich.me)**
+
+</section>

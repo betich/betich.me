@@ -7,7 +7,7 @@ body {
   background: #fff;
   cursor: grab;
   display: flex;
-  height: 52dvh;
+  height: 68dvh;
   justify-content: center;
   outline: none;
   overflow: hidden;
@@ -26,7 +26,7 @@ body {
 
 .spinny-stage {
   aspect-ratio: 440 / 502;
-  height: min(52dvh, 177.7778vw);
+  height: min(52dvh, 114.0909vw);
   max-height: 100%;
   max-width: 100%;
   position: relative;

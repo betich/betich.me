@@ -51,6 +51,7 @@ export default function SpinnyViewer() {
   }
 
   function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
     stopInertia();
     event.currentTarget.setPointerCapture(event.pointerId);
     drag.current = {
@@ -76,7 +77,9 @@ export default function SpinnyViewer() {
   function handlePointerUp(event: React.PointerEvent<HTMLDivElement>) {
     if (!drag.current.active) return;
     drag.current.active = false;
-    event.currentTarget.releasePointerCapture(event.pointerId);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
     animateInertia();
   }
 

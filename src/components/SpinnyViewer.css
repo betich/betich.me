@@ -41,16 +41,31 @@
   width: 100%;
 }
 
-/* All frames stay mounted and stacked: decoded up front, swapped by opacity. */
-.spinny-figure img {
-  display: block;
+/*
+ * The frames are cropped to the subject (394x876 out of the original 1080x1234),
+ * so .spinny-frame stands in for the full original canvas — the same box the
+ * uncropped image used to occupy — and each frame sits inside it at the crop's
+ * offset. Identical framing, a quarter of the pixels.
+ */
+.spinny-frame {
+  aspect-ratio: 1080 / 1234;
   height: 100%;
   inset: 0;
-  object-fit: contain;
-  pointer-events: none;
+  margin: auto;
   position: absolute;
   transform: scale(1.5);
-  width: 100%;
+  width: auto;
+}
+
+/* All frames stay mounted and stacked: decoded up front, swapped by opacity. */
+.spinny-frame img {
+  display: block;
+  height: 70.988655%; /* 876 / 1234 */
+  left: 30.37037%; /* 328 / 1080 */
+  pointer-events: none;
+  position: absolute;
+  top: 17.017828%; /* 210 / 1234 */
+  width: 36.481481%; /* 394 / 1080 */
 }
 
 .spinny-hint {

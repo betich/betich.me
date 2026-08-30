@@ -7,22 +7,41 @@ const FRAME_COUNT = 9;
 const PIXELS_PER_FRAME = 42;
 /** Only pointer samples this recent feed the release velocity. */
 const VELOCITY_WINDOW_MS = 90;
-/** A release coasts as far as its velocity would carry it in this many seconds. */
-const COAST_SECONDS = 0.28;
-/** Ceiling on that coast, so even a violent flick settles promptly. */
-const MAX_COAST_FRAMES = FRAME_COUNT * 2.5;
-/** Settle spring. Damping ratio ~0.65: one small overshoot, then rest, in about 0.9s. */
+
+/*
+ * Release is two phases. First a coast: velocity decays exponentially, with a time
+ * constant that grows with how hard it was thrown, so a hard swipe carries like a
+ * heavy flywheel instead of travelling merely proportionally further. Then, once it
+ * has slowed to a crawl, a spring takes over and eases it onto a whole frame.
+ */
+
+/** Coast time constant for a gentle release, and for one thrown at FLYWHEEL_SPEED. */
+const COAST_MIN_SECONDS = 0.22;
+const COAST_MAX_SECONDS = 0.95;
+/** Release speed, in frames/second, at which the coast is at its longest. */
+const FLYWHEEL_SPEED = 38;
+/** Ceiling on coast distance, so a violent flick still comes to rest. */
+const MAX_COAST_FRAMES = FRAME_COUNT * 3;
+/** Coasting hands over to the settle spring below this speed, in frames/second. */
+const SETTLE_SPEED = 5.5;
+/** How far ahead the spring aims when it takes over, in seconds of travel. */
+const SETTLE_LEAD_SECONDS = 0.11;
+
+/** Settle spring: stiffness, and damping at a ratio of ~0.65 for a soft landing. */
 const SPRING_STIFFNESS = 140;
 const SPRING_DAMPING = 15.4;
-/** Spin speed, in frames/second, at which neighbouring frames cross-fade fully. */
-const BLEND_SPEED = 7;
 /** Fixed physics substep, so the spring feels identical at 60Hz and 120Hz. */
 const SUBSTEP_SECONDS = 1 / 240;
 /** Below this displacement and speed the spring has arrived. */
 const REST_DISTANCE = 0.001;
 const REST_SPEED = 0.05;
+/** Longest frame gap we integrate, so a backgrounded tab does not jump on return. */
+const MAX_TICK_SECONDS = 0.064;
 
-const frames = Array.from({ length: FRAME_COUNT }, (_, index) => `/images/spinny/${index + 1}.png`);
+/** Spin speed, in frames/second, at which neighbouring frames cross-fade fully. */
+const BLEND_SPEED = 7;
+
+const frames = Array.from({ length: FRAME_COUNT }, (_, index) => `/images/spinny/${index + 1}.webp`);
 
 const wrapFrame = (frame: number) => ((frame % FRAME_COUNT) + FRAME_COUNT) % FRAME_COUNT;
 
@@ -37,6 +56,8 @@ export default function SpinnyViewer() {
   const position = useRef(0);
   /** Frames per second, signed. */
   const velocity = useRef(0);
+  /** Coast time constant for the throw in progress, or null once the spring has it. */
+  const coastTau = useRef<number | null>(null);
   /** Where the settle spring is pulling to — always a whole frame. */
   const target = useRef(0);
   const animation = useRef<number | null>(null);
@@ -72,10 +93,25 @@ export default function SpinnyViewer() {
     animation.current = null;
   }
 
-  function tick(now: number) {
-    const elapsed = Math.min((now - lastTick.current) / 1000, 0.064);
-    lastTick.current = now;
+  function startAnimation() {
+    stopAnimation();
+    lastTick.current = performance.now();
+    animation.current = requestAnimationFrame(tick);
+  }
 
+  /** Exponential decay, integrated exactly, so the glide is frame-rate independent. */
+  function coast(elapsed: number, tau: number) {
+    const decay = Math.exp(-elapsed / tau);
+    position.current += velocity.current * tau * (1 - decay);
+    velocity.current *= decay;
+
+    if (Math.abs(velocity.current) <= SETTLE_SPEED) {
+      coastTau.current = null;
+      target.current = Math.round(position.current + velocity.current * SETTLE_LEAD_SECONDS);
+    }
+  }
+
+  function spring(elapsed: number) {
     let remaining = elapsed;
     while (remaining > 0) {
       const step = Math.min(SUBSTEP_SECONDS, remaining);
@@ -85,46 +121,61 @@ export default function SpinnyViewer() {
       velocity.current += (pull + damping) * step;
       position.current += velocity.current * step;
     }
+  }
 
-    if (Math.abs(position.current - target.current) < REST_DISTANCE && Math.abs(velocity.current) < REST_SPEED) {
-      // Land exactly on the frame, and keep the running position small.
-      position.current = wrapFrame(target.current);
-      velocity.current = 0;
-      animation.current = null;
-      paint();
-      return;
+  function tick(now: number) {
+    const elapsed = Math.min((now - lastTick.current) / 1000, MAX_TICK_SECONDS);
+    lastTick.current = now;
+
+    if (coastTau.current !== null) {
+      coast(elapsed, coastTau.current);
+    } else {
+      spring(elapsed);
+      if (Math.abs(position.current - target.current) < REST_DISTANCE && Math.abs(velocity.current) < REST_SPEED) {
+        // Land exactly on the frame, and keep the running position small.
+        position.current = wrapFrame(target.current);
+        velocity.current = 0;
+        animation.current = null;
+        paint();
+        return;
+      }
     }
 
     paint();
     animation.current = requestAnimationFrame(tick);
   }
 
-  /** Spring onto a whole frame, carrying whatever velocity we already have. */
+  /** Spring straight onto a whole frame, carrying whatever velocity we already have. */
   function settleTo(frame: number) {
+    coastTau.current = null;
     target.current = frame;
-    stopAnimation();
 
     if (prefersReducedMotion()) {
+      stopAnimation();
       position.current = wrapFrame(frame);
       velocity.current = 0;
       paint();
       return;
     }
 
-    lastTick.current = performance.now();
-    animation.current = requestAnimationFrame(tick);
+    startAnimation();
   }
 
-  /** Project where the flick was headed, then settle on the frame nearest to it. */
+  /** Let go: coast on the momentum of the throw, then settle. */
   function release() {
-    let coast = velocity.current * COAST_SECONDS;
-    if (Math.abs(coast) > MAX_COAST_FRAMES) {
-      // Scale velocity with the coast so the spring keeps its shape.
-      const scale = MAX_COAST_FRAMES / Math.abs(coast);
-      coast *= scale;
-      velocity.current *= scale;
+    const speed = Math.abs(velocity.current);
+
+    if (speed <= SETTLE_SPEED || prefersReducedMotion()) {
+      settleTo(Math.round(position.current + velocity.current * SETTLE_LEAD_SECONDS));
+      return;
     }
-    settleTo(Math.round(position.current + coast));
+
+    // Heavier throws hold their speed for longer, then give it up gradually.
+    const heft = Math.min(speed / FLYWHEEL_SPEED, 1);
+    const tau = COAST_MIN_SECONDS + (COAST_MAX_SECONDS - COAST_MIN_SECONDS) * heft;
+    // Cap the glide by braking sooner, so the throw still starts at full speed.
+    coastTau.current = Math.min(tau, MAX_COAST_FRAMES / speed);
+    startAnimation();
   }
 
   function dismissHint() {
@@ -133,6 +184,7 @@ export default function SpinnyViewer() {
 
   function beginDrag(x: number, pointerId: number) {
     stopAnimation();
+    coastTau.current = null;
     velocity.current = 0;
     drag.current = { pointerId, lastX: x, samples: [{ time: performance.now(), position: position.current }] };
     dismissHint();
@@ -221,18 +273,22 @@ export default function SpinnyViewer() {
     >
       <div className="spinny-stage">
         <div className="spinny-figure">
-          {frames.map((src, index) => (
-            <img
-              key={src}
-              ref={(element) => {
-                imageRefs.current[index] = element;
-              }}
-              src={src}
-              alt=""
-              draggable={false}
-              style={{ opacity: index === 0 ? 1 : 0 }}
-            />
-          ))}
+          <div className="spinny-frame">
+            {frames.map((src, index) => (
+              <img
+                key={src}
+                ref={(element) => {
+                  imageRefs.current[index] = element;
+                }}
+                src={src}
+                alt=""
+                width={394}
+                height={876}
+                draggable={false}
+                style={{ opacity: index === 0 ? 1 : 0 }}
+              />
+            ))}
+          </div>
         </div>
       </div>
 

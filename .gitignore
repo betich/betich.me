@@ -19,3 +19,8 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+# wrangler local secrets
+worker/.dev.vars
+worker/.wrangler/
+worker/.admin-key

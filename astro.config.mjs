@@ -8,5 +8,6 @@ import mdx from "@astrojs/mdx";
 export default defineConfig({
   output: "static",
   site: "https://betich.me",
-  integrations: [mdx(), sitemap(), tailwind(), react()],
+  // The tracker is a private tool, not part of the public site.
+  integrations: [mdx(), sitemap({ filter: (page) => !page.includes("/track") }), tailwind(), react()],
 });

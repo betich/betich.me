@@ -68,6 +68,31 @@
   width: 36.481481%; /* 394 / 1080 */
 }
 
+/*
+ * Footer ornament: fills whatever box it's given instead of claiming viewport
+ * height, and drops the hint — at this size the label would be unreadable.
+ * The frames have no alpha, so it keeps its white ground and reads as a sticker.
+ */
+.spinny-viewer.is-compact {
+  border-radius: 1rem;
+  height: 100%;
+  width: 100%;
+}
+
+.spinny-viewer.is-compact .spinny-stage {
+  height: 100%;
+  transform: none;
+  width: 100%;
+}
+
+.spinny-viewer.is-compact .spinny-frame {
+  transform: scale(1.62);
+}
+
+.spinny-viewer.is-compact .spinny-hint {
+  display: none;
+}
+
 .spinny-hint {
   align-items: center;
   bottom: max(2dvh, 0.75rem);

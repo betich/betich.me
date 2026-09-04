@@ -1,0 +1,199 @@
+import { useEffect, useRef, useState } from "react";
+import Compass, { COMPASS_CENTER } from "./Compass";
+import TrackMap from "./TrackMap";
+import Timeline from "./Timeline";
+import SpinnyMark from "./SpinnyMark";
+import { useTracker } from "./useTracker";
+import { useAngleDriver, useDeviceHeading, useGeolocation } from "./sensors";
+import { bearing, compassPoint, distance, formatAge, formatDistance, normalize } from "./geo";
+import { glowColor, groundColor, proximity } from "./proximity";
+import "./track.css";
+
+/** A fix older than this is shown as stale rather than live. */
+const STALE_AFTER_MS = 20_000;
+
+type Tab = "compass" | "map" | "updates";
+
+export default function TrackApp() {
+  const tracker = useTracker({ role: "viewer" });
+  const me = useGeolocation();
+  const heading = useDeviceHeading();
+
+  const [tab, setTab] = useState<Tab>("compass");
+  const [fitKey, setFitKey] = useState(0);
+  const [now, setNow] = useState(() => Date.now());
+
+  const ringRef = useRef<SVGGElement>(null);
+  const needleRef = useRef<SVGGElement>(null);
+
+  // Drives the "3s ago" readout and the live/stale badge.
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1_000);
+    return () => clearInterval(id);
+  }, []);
+
+  const bundit = tracker.fix ? { lat: tracker.fix.lat, lon: tracker.fix.lon } : null;
+  const metres = me.coords && bundit ? distance(me.coords, bundit) : null;
+  const course = me.coords && bundit ? bearing(me.coords, bundit) : null;
+
+  // Fall back to course over ground where there's no magnetometer — on a laptop,
+  // or with motion access denied, a moving device can still orient itself.
+  const facing = heading.degrees ?? me.heading;
+
+  useAngleDriver(() => [
+    { element: ringRef.current, degrees: -(facing ?? 0), origin: COMPASS_CENTER },
+    {
+      element: needleRef.current,
+      degrees: course === null ? null : normalize(course - (facing ?? 0)),
+      origin: COMPASS_CENTER,
+    },
+  ]);
+
+  const nearness = proximity(metres);
+  const age = tracker.fix ? now + tracker.clockSkew - tracker.fix.ts : null;
+  const stale = age !== null && age > STALE_AFTER_MS;
+
+  const readout = metres === null ? null : formatDistance(metres);
+
+  const show = (next: Tab) => {
+    setTab(next);
+    if (next === "map") setFitKey((key) => key + 1);
+  };
+
+  return (
+    <div
+      className="track flex flex-col font-mono"
+      style={{ "--ground": groundColor(nearness), "--glow": glowColor(nearness) } as React.CSSProperties}
+    >
+      <header className="flex shrink-0 items-center justify-between px-5 pb-1 pt-[max(0.85rem,env(safe-area-inset-top))]">
+        <span className="track-label text-[11px] font-bold">bundit</span>
+        <Status tracker={tracker} stale={stale} />
+      </header>
+
+      {tab === "compass" ? (
+        <>
+          <div className="relative grid min-h-0 flex-1 place-items-center px-4">
+            <div className="track-glow pointer-events-none absolute inset-0" />
+            <div className="relative aspect-square max-h-full w-[min(88vw,30rem)]">
+              <Compass ringRef={ringRef} needleRef={needleRef} hasTarget={course !== null} />
+              {heading.permission === "prompt" && (
+                <button
+                  type="button"
+                  onClick={() => void heading.request()}
+                  className="track-label absolute inset-x-0 bottom-[8%] mx-auto w-max rounded-full border border-[var(--hairline)] bg-black/25 px-5 py-3 text-[10px] font-bold backdrop-blur-sm"
+                >
+                  Tap to enable compass
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="shrink-0 px-5 pb-3 text-center">
+            <div className="track-figure font-bold">{readout?.value ?? "—"}</div>
+            <div className="track-unit track-label mt-3 font-bold text-[var(--muted)]">
+              {readout ? `${readout.unit} away` : ""}
+            </div>
+            <p className="track-label mt-4 min-h-[1rem] text-[10px] font-medium text-[var(--muted)]">
+              {readout ? <Detail course={course} fix={tracker.fix} age={age} facing={facing} /> : <Reason tracker={tracker} me={me} age={age} />}
+            </p>
+          </div>
+        </>
+      ) : tab === "map" ? (
+        <div className="min-h-0 flex-1">
+          <TrackMap me={me.coords} bundit={bundit} fitKey={fitKey} />
+        </div>
+      ) : (
+        <div className="min-h-0 flex-1 pb-3">
+          <Timeline updates={tracker.updates} now={now} />
+        </div>
+      )}
+
+      <SpinnyMark />
+
+      <nav className="grid shrink-0 grid-cols-3 border-t border-[var(--hairline)] pb-[env(safe-area-inset-bottom)]">
+        {(["compass", "map", "updates"] as const).map((name) => (
+          <button
+            key={name}
+            type="button"
+            onClick={() => show(name)}
+            aria-current={tab === name}
+            className={`track-label relative py-6 text-[11px] font-bold transition-colors ${
+              tab === name ? "bg-white/10 text-[var(--ink)]" : "text-[var(--muted)]"
+            }`}
+          >
+            {name}
+            {name === "updates" && tracker.updates.length > 0 && tab !== "updates" && (
+              <span className="absolute right-[22%] top-[34%] h-1.5 w-1.5 rounded-full bg-[var(--ink)]" />
+            )}
+          </button>
+        ))}
+      </nav>
+    </div>
+  );
+}
+
+/** The live badge: colour and wording both come from the freshest thing we know. */
+function Status({ tracker, stale }: { tracker: ReturnType<typeof useTracker>; stale: boolean }) {
+  const [label, tone] =
+    tracker.status === "unconfigured"
+      ? ["no endpoint", "var(--dead)"]
+      : tracker.status === "connecting"
+        ? ["connecting", "var(--stale)"]
+        : tracker.status === "offline"
+          ? ["reconnecting", "var(--dead)"]
+          : !tracker.tracking
+            ? ["not tracking", "var(--dead)"]
+            : stale
+              ? ["stale", "var(--stale)"]
+              : ["live", "var(--live)"];
+
+  return (
+    <span className="track-label flex items-center gap-2 text-[10px] font-bold text-[var(--muted)]">
+      <span className="relative flex h-2 w-2">
+        {tone === "var(--live)" && <span className="track-pulse absolute inset-0 rounded-full bg-[var(--live)]" />}
+        <span className="h-2 w-2 rounded-full" style={{ background: tone }} />
+      </span>
+      {label}
+      {tracker.viewers > 1 && <span className="opacity-60">· {tracker.viewers} watching</span>}
+    </span>
+  );
+}
+
+/** Supporting numbers, shown only once there is a distance to support. */
+function Detail({
+  course,
+  fix,
+  age,
+  facing,
+}: {
+  course: number | null;
+  fix: ReturnType<typeof useTracker>["fix"];
+  age: number | null;
+  facing: number | null;
+}) {
+  const parts = [
+    course !== null ? `${compassPoint(course)} ${Math.round(course)}°` : null,
+    fix?.acc ? `±${Math.round(fix.acc)}m` : null,
+    age !== null ? formatAge(age) : null,
+    facing === null ? "north-up" : null,
+  ].filter(Boolean);
+
+  return <>{parts.join("  ·  ")}</>;
+}
+
+/** Why there is no distance to show. */
+function Reason({
+  tracker,
+  me,
+  age,
+}: {
+  tracker: ReturnType<typeof useTracker>;
+  me: ReturnType<typeof useGeolocation>;
+  age: number | null;
+}) {
+  if (tracker.status === "unconfigured") return <>Tracker endpoint not configured</>;
+  if (me.error) return <>{me.error}</>;
+  if (!me.coords) return <>Waiting for your location</>;
+  if (!tracker.fix) return <>No signal from bundit yet</>;
+  return <>Last seen {age !== null ? formatAge(age) : "a while ago"}</>;
+}

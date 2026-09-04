@@ -48,7 +48,16 @@ const wrapFrame = (frame: number) => ((frame % FRAME_COUNT) + FRAME_COUNT) % FRA
 const prefersReducedMotion = () =>
   typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-export default function SpinnyViewer() {
+interface SpinnyViewerProps {
+  /**
+   * Shrink to an ornament that fits a footer: no hint, no reserved page height,
+   * and cropped into its container. The frames have no alpha, so a compact
+   * viewer keeps its white ground and reads as a sticker on a dark surface.
+   */
+  compact?: boolean;
+}
+
+export default function SpinnyViewer({ compact = false }: SpinnyViewerProps = {}) {
   const viewerRef = useRef<HTMLDivElement>(null);
   const imageRefs = useRef<(HTMLImageElement | null)[]>([]);
 
@@ -261,7 +270,7 @@ export default function SpinnyViewer() {
   return (
     <div
       ref={viewerRef}
-      className="spinny-viewer is-hinting"
+      className={`spinny-viewer${compact ? " is-compact" : " is-hinting"}`}
       role="img"
       aria-label="Thee in a graduation gown. Drag horizontally to turn the portrait."
       tabIndex={0}

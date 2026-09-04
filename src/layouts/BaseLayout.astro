@@ -1,10 +1,12 @@
 ---
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/config";
 
-const { className, ogImage, title: pageTitle, description } = Astro.props;
+const { className, ogImage, title: pageTitle, description, noindex, themeColor, viewport } = Astro.props;
 const resolvedOgImage = ogImage ?? "/og/about.png";
 const resolvedTitle = pageTitle ?? "betich";
 const resolvedDescription = description ?? SITE_DESCRIPTION;
+// App-like routes (/track) need viewport-fit=cover for the safe-area insets.
+const resolvedViewport = viewport ?? "width=device-width";
 ---
 
 <html lang="en">
@@ -27,8 +29,9 @@ const resolvedDescription = description ?? SITE_DESCRIPTION;
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#4845DA" />
     <meta name="msapplication-TileColor" content="#4845DA" />
-    <meta name="theme-color" content="#ffffff" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="theme-color" content={themeColor ?? "#ffffff"} />
+    <meta name="viewport" content={resolvedViewport} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="generator" content={Astro.generator} />
     <title>{resolvedTitle === "betich" ? SITE_TITLE : `${resolvedTitle} — ${SITE_TITLE}`}</title>
     <meta name="description" content={resolvedDescription} />

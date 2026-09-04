@@ -13,11 +13,18 @@
   --tick: rgb(244 243 255 / 0.28);
   --tick-major: rgb(244 243 255 / 0.7);
   --needle-tail: rgb(244 243 255 / 0.22);
+  /* The direction cue on the dial, and what it becomes once you're pointed right. */
+  --beacon: #ffd166;
+  --beacon-locked: #7ff0a8;
   --live: #7ff0a8;
   --stale: #ffd166;
   --dead: rgb(244 243 255 / 0.4);
 
+  /* A definite height, not just a floor: descendants size with height:100%,
+     and Leaflet needs a measurable box or it renders into nothing. */
+  height: 100dvh;
   min-height: 100dvh;
+  overflow: hidden;
   background: var(--ground);
   color: var(--ink);
   /* Long enough to read as a glow rising, short enough to feel responsive. */

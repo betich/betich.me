@@ -1,16 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import Timeline from "./Timeline";
 import SpinnyMark from "./SpinnyMark";
+import PinPicker from "./PinPicker";
 import { useTracker } from "./useTracker";
 import { useGeolocation } from "./sensors";
 import { toDataUrl } from "./photo";
-import { formatAge } from "./geo";
+import { formatAge, type LatLon } from "./geo";
 import { groundColor } from "./proximity";
 import { MAX_UPDATE_TEXT } from "@tracker/protocol";
 import "./track.css";
 
-/** Fixes are pushed no faster than this; the watcher can fire far more often. */
-const MIN_SEND_INTERVAL_MS = 1_000;
+/**
+ * Resend cadence. The position often doesn't change — pinned, or standing still
+ * — but viewers age the last fix, so a quiet tracker must still say it's here.
+ */
+const HEARTBEAT_MS = 8_000;
 /** Ground brightness while broadcasting, and while idle. */
 const LIVE_GROUND = 0.72;
 const IDLE_GROUND = 0.06;
@@ -27,6 +31,9 @@ export default function AdminApp() {
   const [broadcasting, setBroadcasting] = useState(false);
   const [takeover, setTakeover] = useState(false);
   const [tab, setTab] = useState<Tab>("broadcast");
+  /** A hand-placed spot that overrides GPS until cleared. */
+  const [pinned, setPinned] = useState<LatLon | null>(null);
+  const [picking, setPicking] = useState(false);
 
   const tracker = useTracker(
     takeover ? { role: "admin", key, takeover: "1" } : { role: "admin", key },
@@ -34,7 +41,6 @@ export default function AdminApp() {
   );
   const me = useGeolocation();
 
-  const lastSent = useRef(0);
   const [sentAt, setSentAt] = useState<number | null>(null);
   const [now, setNow] = useState(() => Date.now());
 
@@ -48,17 +54,28 @@ export default function AdminApp() {
     if (tracker.denied) setBroadcasting(false);
   }, [tracker.denied]);
 
+  // One sender for both sources: pushes immediately whenever the position or
+  // its source changes, then keeps a heartbeat going so the fix stays fresh.
+  const source = pinned ?? me.coords;
   useEffect(() => {
-    if (!broadcasting || tracker.status !== "open" || !me.coords) return;
-    if (Date.now() - lastSent.current < MIN_SEND_INTERVAL_MS) return;
+    if (!broadcasting || tracker.status !== "open" || !source) return;
 
-    lastSent.current = Date.now();
-    setSentAt(lastSent.current);
-    tracker.send({
-      t: "fix",
-      fix: { lat: me.coords.lat, lon: me.coords.lon, acc: me.accuracy, spd: me.speed, hdg: me.heading },
-    });
-  }, [broadcasting, tracker.status, me.coords?.lat, me.coords?.lon, me.accuracy]);
+    const push = () => {
+      tracker.send({
+        t: "fix",
+        fix: pinned
+          // A pinned spot has no measurement error to report; a null accuracy is
+          // what tells viewers it was placed by hand.
+          ? { lat: pinned.lat, lon: pinned.lon, acc: null, spd: null, hdg: null }
+          : { lat: source.lat, lon: source.lon, acc: me.accuracy, spd: me.speed, hdg: me.heading },
+      });
+      setSentAt(Date.now());
+    };
+
+    push();
+    const id = setInterval(push, HEARTBEAT_MS);
+    return () => clearInterval(id);
+  }, [broadcasting, tracker.status, pinned, source?.lat, source?.lon, me.accuracy]);
 
   const start = (withTakeover: boolean) => {
     setTakeover(withTakeover);
@@ -80,7 +97,16 @@ export default function AdminApp() {
         </span>
       </header>
 
-      {tab === "broadcast" ? (
+      {picking ? (
+        <PinPicker
+          start={pinned ?? me.coords}
+          onSave={(point) => {
+            setPinned(point);
+            setPicking(false);
+          }}
+          onCancel={() => setPicking(false)}
+        />
+      ) : tab === "broadcast" ? (
         <>
           <main className="flex min-h-0 flex-1 flex-col items-center justify-center gap-8 px-6 text-center">
             <p className="track-figure font-bold" style={{ fontSize: "clamp(3rem, 20vw, 8rem)" }}>
@@ -88,18 +114,45 @@ export default function AdminApp() {
             </p>
 
             <p className="track-label max-w-xs text-[11px] font-medium leading-relaxed text-[var(--muted)]">
-              <Explanation tracker={tracker} me={me} broadcasting={broadcasting} hasKey={Boolean(key)} />
+              <Explanation
+            tracker={tracker}
+            me={me}
+            broadcasting={broadcasting}
+            hasKey={Boolean(key)}
+            pinned={pinned !== null}
+          />
             </p>
 
             <dl className="track-label grid w-full max-w-xs grid-cols-2 gap-y-3 text-left text-[10px] font-medium text-[var(--muted)]">
-              <Row label="Latitude" value={me.coords ? me.coords.lat.toFixed(5) : "—"} />
-              <Row label="Longitude" value={me.coords ? me.coords.lon.toFixed(5) : "—"} />
-              <Row label="Accuracy" value={me.accuracy ? `±${Math.round(me.accuracy)} m` : "—"} />
+              <Row label="Source" value={pinned ? "Pinned by hand" : "GPS"} />
+              <Row label="Latitude" value={source ? source.lat.toFixed(6) : "—"} />
+              <Row label="Longitude" value={source ? source.lon.toFixed(6) : "—"} />
+              <Row label="Accuracy" value={pinned ? "exact" : me.accuracy ? `±${Math.round(me.accuracy)} m` : "—"} />
               <Row label="Last sent" value={sentAt ? formatAge(now - sentAt) : "—"} />
             </dl>
           </main>
 
-          <div className="shrink-0 px-5 pb-4">
+          <div className="shrink-0 space-y-3 px-5 pb-4">
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setPicking(true)}
+                className="track-label flex-1 rounded-2xl border border-[var(--hairline)] py-5 text-[10px] font-bold"
+                style={pinned ? { color: "var(--beacon)", borderColor: "var(--beacon)" } : undefined}
+              >
+                {pinned ? "Move pin" : "Pin exact spot"}
+              </button>
+              {pinned && (
+                <button
+                  type="button"
+                  onClick={() => setPinned(null)}
+                  className="track-label flex-1 rounded-2xl border border-[var(--hairline)] py-5 text-[10px] font-bold text-[var(--muted)]"
+                >
+                  Back to GPS
+                </button>
+              )}
+            </div>
+
             {tracker.denied === "locked" || tracker.denied === "superseded" ? (
               <Button onClick={() => start(true)}>Take over</Button>
             ) : broadcasting ? (
@@ -274,11 +327,13 @@ function Explanation({
   me,
   broadcasting,
   hasKey,
+  pinned,
 }: {
   tracker: ReturnType<typeof useTracker>;
   me: ReturnType<typeof useGeolocation>;
   broadcasting: boolean;
   hasKey: boolean;
+  pinned: boolean;
 }) {
   if (!hasKey) return <>Open this page with ?key=… to take the tracker.</>;
   if (tracker.status === "unconfigured") return <>Tracker endpoint not configured.</>;
@@ -286,8 +341,9 @@ function Explanation({
   if (tracker.denied === "locked") return <>Another device holds the tracker. Taking over will disconnect it.</>;
   if (tracker.denied === "superseded") return <>Another device took the tracker from this one.</>;
   if (!broadcasting) return <>Only one device can broadcast at a time.</>;
-  if (me.error) return <>{me.error}</>;
   if (tracker.status !== "open") return <>Connecting…</>;
+  if (pinned) return <>Broadcasting the spot you pinned, not GPS.</>;
+  if (me.error) return <>{me.error}</>;
   if (!me.coords) return <>Waiting for a location fix…</>;
   return <>Broadcasting your position.</>;
 }

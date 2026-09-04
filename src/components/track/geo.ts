@@ -59,6 +59,33 @@ export function compassPoint(deg: number): string {
   return POINTS[Math.round(normalize(deg) / 22.5) % 16];
 }
 
+/** How far off straight-ahead still counts as pointed at it, in degrees. */
+export const LOCKED_WITHIN_DEG = 8;
+
+export interface Steer {
+  label: string;
+  /** True once the phone is pointed close enough to just walk. */
+  locked: boolean;
+}
+
+/**
+ * Turn-by-turn wording for the angle between where the phone is pointed and
+ * where the bundit is. `offset` is signed screen degrees: positive is to the
+ * right. Null while there's no heading to compare against.
+ */
+export function steer(offset: number | null): Steer | null {
+  if (offset === null) return null;
+
+  const magnitude = Math.abs(offset);
+  if (magnitude <= LOCKED_WITHIN_DEG) return { label: "straight ahead", locked: true };
+
+  const side = offset > 0 ? "right" : "left";
+  if (magnitude <= 35) return { label: `turn ${side} a bit`, locked: false };
+  if (magnitude <= 100) return { label: `turn ${side}`, locked: false };
+  if (magnitude <= 150) return { label: `turn hard ${side}`, locked: false };
+  return { label: "turn around", locked: false };
+}
+
 /** "3s ago" / "4m ago", for ageing a fix. */
 export function formatAge(ms: number): string {
   const seconds = Math.max(0, Math.round(ms / 1000));

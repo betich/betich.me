@@ -126,5 +126,5 @@ export default function TrackMap({ me, bundit, fitKey }: TrackMapProps) {
     }
   }, [fitKey]);
 
-  return <div ref={container} className="h-full w-full" />;
+  return <div ref={container} className="absolute inset-0" />;
 }

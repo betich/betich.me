@@ -5,7 +5,7 @@ import Timeline from "./Timeline";
 import SpinnyMark from "./SpinnyMark";
 import { useTracker } from "./useTracker";
 import { useAngleDriver, useDeviceHeading, useGeolocation } from "./sensors";
-import { bearing, compassPoint, distance, formatAge, formatDistance, normalize } from "./geo";
+import { bearing, compassPoint, distance, formatAge, formatDistance, normalize, shortestTurn, steer } from "./geo";
 import { glowColor, groundColor, proximity } from "./proximity";
 import "./track.css";
 
@@ -49,6 +49,11 @@ export default function TrackApp() {
     },
   ]);
 
+  // Signed degrees from straight-ahead to the bundit; drives both the wording
+  // and the beacon's locked state.
+  const offset = course === null || facing === null ? null : shortestTurn(0, normalize(course - facing));
+  const heads = steer(offset);
+
   const nearness = proximity(metres);
   const age = tracker.fix ? now + tracker.clockSkew - tracker.fix.ts : null;
   const stale = age !== null && age > STALE_AFTER_MS;
@@ -74,32 +79,55 @@ export default function TrackApp() {
         <>
           <div className="relative grid min-h-0 flex-1 place-items-center px-4">
             <div className="track-glow pointer-events-none absolute inset-0" />
-            <div className="relative aspect-square max-h-full w-[min(88vw,30rem)]">
-              <Compass ringRef={ringRef} needleRef={needleRef} hasTarget={course !== null} />
-              {heading.permission === "prompt" && (
-                <button
-                  type="button"
-                  onClick={() => void heading.request()}
-                  className="track-label absolute inset-x-0 bottom-[8%] mx-auto w-max rounded-full border border-[var(--hairline)] bg-black/25 px-5 py-3 text-[10px] font-bold backdrop-blur-sm"
-                >
-                  Tap to enable compass
-                </button>
-              )}
+            <div className="relative aspect-square max-h-full w-[min(84vw,28rem)]">
+              <Compass
+                ringRef={ringRef}
+                needleRef={needleRef}
+                hasTarget={course !== null}
+                locked={heads?.locked ?? false}
+              />
             </div>
           </div>
 
           <div className="shrink-0 px-5 pb-3 text-center">
-            <div className="track-figure font-bold">{readout?.value ?? "—"}</div>
+            {/*
+              One line that always says the most useful thing it can: how to
+              turn, or why it can't say yet.
+            */}
+            <div className="mb-1 flex min-h-[3rem] items-center justify-center">
+              {heading.permission === "prompt" ? (
+                <button
+                  type="button"
+                  onClick={() => void heading.request()}
+                  className="track-label rounded-full border border-[var(--hairline)] px-6 py-3 text-[10px] font-bold"
+                >
+                  Tap to enable compass
+                </button>
+              ) : heads ? (
+                <p
+                  className="track-label text-[13px] font-bold transition-colors"
+                  style={{ color: heads.locked ? "var(--beacon-locked)" : "var(--beacon)" }}
+                >
+                  {heads.label}
+                </p>
+              ) : (
+                <p className="track-label text-[10px] font-bold text-[var(--muted)]">
+                  {course === null ? "" : "north-up · no compass"}
+                </p>
+              )}
+            </div>
+
+            <div className="track-figure font-bold">{readout?.value ?? <span className="opacity-25">···</span>}</div>
             <div className="track-unit track-label mt-3 font-bold text-[var(--muted)]">
               {readout ? `${readout.unit} away` : ""}
             </div>
             <p className="track-label mt-4 min-h-[1rem] text-[10px] font-medium text-[var(--muted)]">
-              {readout ? <Detail course={course} fix={tracker.fix} age={age} facing={facing} /> : <Reason tracker={tracker} me={me} age={age} />}
+              {readout ? <Detail course={course} fix={tracker.fix} age={age} /> : <Reason tracker={tracker} me={me} age={age} />}
             </p>
           </div>
         </>
       ) : tab === "map" ? (
-        <div className="min-h-0 flex-1">
+        <div className="relative min-h-0 flex-1">
           <TrackMap me={me.coords} bundit={bundit} fitKey={fitKey} />
         </div>
       ) : (
@@ -164,18 +192,16 @@ function Detail({
   course,
   fix,
   age,
-  facing,
 }: {
   course: number | null;
   fix: ReturnType<typeof useTracker>["fix"];
   age: number | null;
-  facing: number | null;
 }) {
   const parts = [
     course !== null ? `${compassPoint(course)} ${Math.round(course)}°` : null,
-    fix?.acc ? `±${Math.round(fix.acc)}m` : null,
+    // A null accuracy means the spot was pinned by hand, not read off GPS.
+    fix?.acc ? `±${Math.round(fix.acc)}m` : "pinned",
     age !== null ? formatAge(age) : null,
-    facing === null ? "north-up" : null,
   ].filter(Boolean);
 
   return <>{parts.join("  ·  ")}</>;

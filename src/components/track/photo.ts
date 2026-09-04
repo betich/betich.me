@@ -17,7 +17,9 @@ const MIN_EDGE = 480;
  * failing on a photo the user just took.
  */
 export async function toDataUrl(file: File): Promise<string> {
-  const bitmap = await createImageBitmap(file);
+  // Phone cameras record rotation in EXIF rather than in the pixels, so without
+  // this a portrait shot is drawn to the canvas on its side.
+  const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
 
   try {
     let edge = Math.min(START_EDGE, Math.max(bitmap.width, bitmap.height));

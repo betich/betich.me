@@ -48,6 +48,11 @@ const wrapFrame = (frame: number) => ((frame % FRAME_COUNT) + FRAME_COUNT) % FRA
 const prefersReducedMotion = () =>
   typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+/** After a drag or throw, leave the figure alone this long before the compass reclaims it. */
+const HEADING_GRACE_MS = 4000;
+/** Fraction of the remaining gap closed each frame at 60fps, easing the follow. */
+const HEADING_EASE = 0.18;
+
 interface SpinnyViewerProps {
   /**
    * Shrink to an ornament that fits a footer: no hint, no reserved page height,
@@ -55,9 +60,18 @@ interface SpinnyViewerProps {
    * viewer keeps its white ground and reads as a sticker on a dark surface.
    */
   compact?: boolean;
+  /**
+   * Live compass heading in degrees, as a ref written at sensor rate. When
+   * present the figure turns with the phone — turn right and you walk around
+   * him — while dragging still takes precedence for a few seconds afterwards.
+   *
+   * A ref rather than a prop value on purpose: the heading changes ~60 times a
+   * second and re-rendering the portrait that often would be absurd.
+   */
+  headingRef?: React.MutableRefObject<number | null>;
 }
 
-export default function SpinnyViewer({ compact = false }: SpinnyViewerProps = {}) {
+export default function SpinnyViewer({ compact = false, headingRef }: SpinnyViewerProps = {}) {
   const viewerRef = useRef<HTMLDivElement>(null);
   const imageRefs = useRef<(HTMLImageElement | null)[]>([]);
 
@@ -76,6 +90,9 @@ export default function SpinnyViewer({ compact = false }: SpinnyViewerProps = {}
     lastX: 0,
     samples: [],
   });
+
+  /** When the user last touched it; the compass waits this out before taking over. */
+  const lastTouched = useRef(0);
 
   /** Show the nearest frame, ghosting the one we are turning into while moving. */
   function paint() {
@@ -191,7 +208,40 @@ export default function SpinnyViewer({ compact = false }: SpinnyViewerProps = {}
     viewerRef.current?.classList.remove("is-hinting");
   }
 
+  /*
+   * Follow the compass. Runs its own loop rather than joining `tick`, because
+   * that one is a physics simulation that ends at rest — this never ends, and
+   * must yield to the physics whenever a throw is still playing out.
+   */
+  useEffect(() => {
+    if (!headingRef) return;
+    let frame = 0;
+
+    const follow = () => {
+      frame = requestAnimationFrame(follow);
+
+      const heading = headingRef.current;
+      const idle = animation.current === null && drag.current.pointerId === null;
+      if (heading === null || !idle || performance.now() - lastTouched.current < HEADING_GRACE_MS) return;
+
+      // Turning right walks you around him, so the figure turns the other way.
+      const wanted = -(heading / 360) * FRAME_COUNT;
+      // Take the short way round: the seam between frame 8 and 0 is continuous.
+      const delta = ((((wanted - position.current) % FRAME_COUNT) + FRAME_COUNT * 1.5) % FRAME_COUNT) - FRAME_COUNT / 2;
+      if (Math.abs(delta) < 0.002) return;
+
+      position.current += delta * HEADING_EASE;
+      // paint() blends on velocity, so lend it the speed this frame implies.
+      velocity.current = delta * HEADING_EASE * 60;
+      paint();
+    };
+
+    frame = requestAnimationFrame(follow);
+    return () => cancelAnimationFrame(frame);
+  }, [headingRef]);
+
   function beginDrag(x: number, pointerId: number) {
+    lastTouched.current = performance.now();
     stopAnimation();
     coastTau.current = null;
     velocity.current = 0;
@@ -219,6 +269,7 @@ export default function SpinnyViewer({ compact = false }: SpinnyViewerProps = {}
     // A finger that came to rest before lifting should not fling.
     if (performance.now() - samples[samples.length - 1].time > VELOCITY_WINDOW_MS) velocity.current = 0;
     drag.current.pointerId = null;
+    lastTouched.current = performance.now();
     release();
   }
 
@@ -245,6 +296,7 @@ export default function SpinnyViewer({ compact = false }: SpinnyViewerProps = {}
   function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
     event.preventDefault();
+    lastTouched.current = performance.now();
     dismissHint();
     stopAnimation();
     velocity.current = 0;

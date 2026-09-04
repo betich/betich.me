@@ -59,6 +59,20 @@ export function compassPoint(deg: number): string {
   return POINTS[Math.round(normalize(deg) / 22.5) % 16];
 }
 
+/**
+ * Below this, a distance is inside the noise of two consumer GPS fixes and
+ * quoting a number is false precision — two phones on the same desk routinely
+ * read a dozen metres apart. Used as a floor when the devices report optimistic
+ * accuracies; where they report honest ones, their sum wins.
+ */
+export const ARRIVAL_FLOOR_M = 15;
+
+/** True once the gap is small enough that the number means nothing. */
+export function hasArrived(metres: number | null, uncertaintyM: number): boolean {
+  if (metres === null) return false;
+  return metres <= Math.max(ARRIVAL_FLOOR_M, uncertaintyM);
+}
+
 /** How far off straight-ahead still counts as pointed at it, in degrees. */
 export const LOCKED_WITHIN_DEG = 8;
 

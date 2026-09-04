@@ -61,11 +61,23 @@ export function useGeolocation(): Position {
 type OrientationPermission = "unknown" | "prompt" | "granted" | "denied" | "unsupported";
 
 export interface Heading {
-  /** Where the top of the phone points, degrees from true north. */
+  /**
+   * Where the top of the phone points, degrees from true north — throttled,
+   * for anything that renders. Use `live` for animation.
+   */
   degrees: number | null;
+  /**
+   * The same reading at full rate, without re-rendering. The sensor fires at
+   * ~60Hz and putting every sample in state re-renders the whole screen for a
+   * fraction of a degree, so animation loops read this instead.
+   */
+  live: React.MutableRefObject<number | null>;
   permission: OrientationPermission;
   request: () => Promise<void>;
 }
+
+/** How often the throttled heading reaches React. Text doesn't need 60Hz. */
+const HEADING_STATE_INTERVAL_MS = 160;
 
 /** iOS gates the magnetometer behind a call made from a user gesture. */
 type PermissionCapableDeviceOrientation = typeof DeviceOrientationEvent & {
@@ -80,6 +92,8 @@ export function useDeviceHeading(): Heading {
   const [degrees, setDegrees] = useState<number | null>(null);
   const [permission, setPermission] = useState<OrientationPermission>("unknown");
   const listening = useRef(false);
+  const live = useRef<number | null>(null);
+  const lastPublished = useRef(0);
 
   const listen = useCallback(() => {
     if (listening.current) return;
@@ -100,8 +114,15 @@ export function useDeviceHeading(): Heading {
       if (heading === null) return;
 
       // Keep pointing the same way in the world when the screen rotates.
-      setDegrees(normalize(heading + (screen.orientation?.angle ?? 0)));
-      setPermission("granted");
+      const corrected = normalize(heading + (screen.orientation?.angle ?? 0));
+      live.current = corrected;
+
+      const now = performance.now();
+      if (now - lastPublished.current >= HEADING_STATE_INTERVAL_MS) {
+        lastPublished.current = now;
+        setDegrees(corrected);
+        setPermission("granted");
+      }
     };
 
     window.addEventListener("deviceorientationabsolute", handle as EventListener);
@@ -138,7 +159,7 @@ export function useDeviceHeading(): Heading {
     }
   }, [listen]);
 
-  return { degrees, permission, request };
+  return { degrees, live, permission, request };
 }
 
 /** One dial angle to ease towards its target. */

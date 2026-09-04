@@ -5,7 +5,17 @@ import Timeline from "./Timeline";
 import SpinnyMark from "./SpinnyMark";
 import { useTracker } from "./useTracker";
 import { useAngleDriver, useDeviceHeading, useGeolocation } from "./sensors";
-import { bearing, compassPoint, distance, formatAge, formatDistance, normalize, shortestTurn, steer } from "./geo";
+import {
+  bearing,
+  compassPoint,
+  distance,
+  formatAge,
+  formatDistance,
+  hasArrived,
+  normalize,
+  shortestTurn,
+  steer,
+} from "./geo";
 import { glowColor, groundColor, proximity } from "./proximity";
 import "./track.css";
 
@@ -40,21 +50,33 @@ export default function TrackApp() {
   // or with motion access denied, a moving device can still orient itself.
   const facing = heading.degrees ?? me.heading;
 
-  useAngleDriver(() => [
-    { element: ringRef.current, degrees: -(facing ?? 0), origin: COMPASS_CENTER },
-    {
-      element: needleRef.current,
-      degrees: course === null ? null : normalize(course - (facing ?? 0)),
-      origin: COMPASS_CENTER,
-    },
-  ]);
+  // The dial reads the live ref rather than `facing`, so it turns at sensor rate
+  // while the wording below only re-renders a few times a second.
+  useAngleDriver(() => {
+    const live = heading.live.current ?? me.heading ?? 0;
+    return [
+      { element: ringRef.current, degrees: -live, origin: COMPASS_CENTER },
+      {
+        element: needleRef.current,
+        degrees: course === null ? null : normalize(course - live),
+        origin: COMPASS_CENTER,
+      },
+    ];
+  });
+
+  // Two consumer GPS fixes disagree by metres even when the devices touch, so
+  // past a point the number is noise. Say so rather than quoting it.
+  const uncertainty = (me.accuracy ?? 0) + (tracker.fix?.acc ?? 0);
+  const arrived = hasArrived(metres, uncertainty);
 
   // Signed degrees from straight-ahead to the bundit; drives both the wording
-  // and the beacon's locked state.
-  const offset = course === null || facing === null ? null : shortestTurn(0, normalize(course - facing));
+  // and the beacon's locked state. Meaningless once you've arrived, because the
+  // bearing between two overlapping fixes is whatever the noise says.
+  const offset =
+    arrived || course === null || facing === null ? null : shortestTurn(0, normalize(course - facing));
   const heads = steer(offset);
 
-  const nearness = proximity(metres);
+  const nearness = arrived ? 1 : proximity(metres);
   const age = tracker.fix ? now + tracker.clockSkew - tracker.fix.ts : null;
   const stale = age !== null && age > STALE_AFTER_MS;
 
@@ -83,7 +105,7 @@ export default function TrackApp() {
               <Compass
                 ringRef={ringRef}
                 needleRef={needleRef}
-                hasTarget={course !== null}
+                hasTarget={course !== null && !arrived}
                 locked={heads?.locked ?? false}
               />
             </div>
@@ -95,7 +117,11 @@ export default function TrackApp() {
               turn, or why it can't say yet.
             */}
             <div className="mb-1 flex min-h-[3rem] items-center justify-center">
-              {heading.permission === "prompt" ? (
+              {arrived ? (
+                <p className="track-label text-[13px] font-bold" style={{ color: "var(--beacon-locked)" }}>
+                  you're on top of it
+                </p>
+              ) : heading.permission === "prompt" ? (
                 <button
                   type="button"
                   onClick={() => void heading.request()}
@@ -117,12 +143,14 @@ export default function TrackApp() {
               )}
             </div>
 
-            <div className="track-figure font-bold">{readout?.value ?? <span className="opacity-25">···</span>}</div>
+            <div className="track-figure font-bold">
+              {arrived ? "HERE" : (readout?.value ?? <span className="opacity-25">···</span>)}
+            </div>
             <div className="track-unit track-label mt-3 font-bold text-[var(--muted)]">
-              {readout ? `${readout.unit} away` : ""}
+              {arrived ? "look around" : readout ? `${readout.unit} away` : ""}
             </div>
             <p className="track-label mt-4 min-h-[1rem] text-[10px] font-medium text-[var(--muted)]">
-              {readout ? <Detail course={course} fix={tracker.fix} age={age} /> : <Reason tracker={tracker} me={me} age={age} />}
+              {readout ? <Detail course={course} fix={tracker.fix} age={age} metres={arrived ? metres : null} /> : <Reason tracker={tracker} me={me} age={age} />}
             </p>
           </div>
         </>
@@ -136,7 +164,7 @@ export default function TrackApp() {
         </div>
       )}
 
-      <SpinnyMark />
+      <SpinnyMark headingRef={heading.live} />
 
       <nav className="grid shrink-0 grid-cols-3 border-t border-[var(--hairline)] pb-[env(safe-area-inset-bottom)]">
         {(["compass", "map", "updates"] as const).map((name) => (
@@ -192,13 +220,17 @@ function Detail({
   course,
   fix,
   age,
+  metres,
 }: {
   course: number | null;
   fix: ReturnType<typeof useTracker>["fix"];
   age: number | null;
+  /** The raw reading, shown only once the headline has stopped quoting it. */
+  metres: number | null;
 }) {
   const parts = [
-    course !== null ? `${compassPoint(course)} ${Math.round(course)}°` : null,
+    // Bearing is noise at arm's length; the raw gap is the honest thing to show.
+    metres !== null ? `reads ${Math.round(metres)} m` : course !== null ? `${compassPoint(course)} ${Math.round(course)}°` : null,
     // A null accuracy means the spot was pinned by hand, not read off GPS.
     fix?.acc ? `±${Math.round(fix.acc)}m` : "pinned",
     age !== null ? formatAge(age) : null,

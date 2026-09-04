@@ -3,7 +3,7 @@ import Timeline from "./Timeline";
 import SpinnyMark from "./SpinnyMark";
 import PinPicker from "./PinPicker";
 import { useTracker } from "./useTracker";
-import { useGeolocation } from "./sensors";
+import { useDeviceHeading, useGeolocation } from "./sensors";
 import { toDataUrl } from "./photo";
 import { formatAge, type LatLon } from "./geo";
 import { groundColor } from "./proximity";
@@ -40,6 +40,9 @@ export default function AdminApp() {
     broadcasting,
   );
   const me = useGeolocation();
+  // Only for the footer mark. iOS won't hand this over without a gesture and
+  // there's no prompt on this screen, so there he simply stays put.
+  const heading = useDeviceHeading();
 
   const [sentAt, setSentAt] = useState<number | null>(null);
   const [now, setNow] = useState(() => Date.now());
@@ -175,7 +178,7 @@ export default function AdminApp() {
         </div>
       )}
 
-      <SpinnyMark />
+      <SpinnyMark headingRef={heading.live} />
 
       <nav className="grid shrink-0 grid-cols-2 border-t border-[var(--hairline)] pb-[env(safe-area-inset-bottom)]">
         {(["broadcast", "updates"] as const).map((name) => (

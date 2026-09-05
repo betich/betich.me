@@ -117,7 +117,13 @@ export default function TrackApp() {
               One line that always says the most useful thing it can: how to
               turn, or why it can't say yet.
             */}
-            <div className="mb-1 flex min-h-[3rem] items-center justify-center">
+            {/*
+              Positioned, so it paints above the readout below it. The figure
+              sets line-height 0.78, which leaves its glyphs overflowing tens of
+              pixels above their own box — and that overflow is hit-tested, so
+              in normal flow the number silently ate taps on this button.
+            */}
+            <div className="relative z-10 mb-1 flex min-h-[3rem] items-center justify-center">
               {arrived ? (
                 <p className="track-label text-[13px] font-bold" style={{ color: "var(--beacon-locked)" }}>
                   you're on top of it
@@ -126,7 +132,7 @@ export default function TrackApp() {
                 <button
                   type="button"
                   onClick={() => void heading.request()}
-                  className="track-label rounded-full border border-[var(--hairline)] px-6 py-3 text-[10px] font-bold"
+                  className="track-label grid min-h-[44px] place-items-center rounded-full border border-[var(--hairline)] bg-white/[0.06] px-6 text-[10px] font-bold"
                 >
                   Tap to enable compass
                 </button>

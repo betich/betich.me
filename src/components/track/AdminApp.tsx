@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Timeline from "./Timeline";
 import SpinnyMark from "./SpinnyMark";
 import PinPicker from "./PinPicker";
@@ -7,7 +7,7 @@ import { useDeviceHeading, useGeolocation } from "./sensors";
 import { toDataUrl } from "./photo";
 import { formatAge, type LatLon } from "./geo";
 import { groundColor } from "./proximity";
-import { MAX_UPDATE_TEXT } from "@tracker/protocol";
+import { MAX_UPDATE_TEXT, type Fix } from "@tracker/protocol";
 import "./track.css";
 
 /**
@@ -57,28 +57,63 @@ export default function AdminApp() {
     if (tracker.denied) setBroadcasting(false);
   }, [tracker.denied]);
 
+  const source = pinned ?? me.coords;
+
+  /**
+   * The reading as it stands right now, in a ref so a final flush can send it
+   * without depending on a closure that may be a render behind.
+   */
+  const latest = useRef<Omit<Fix, "ts"> | null>(null);
+  useEffect(() => {
+    latest.current = pinned
+      ? // A pinned spot has no measurement error to report; a null accuracy is
+        // what tells viewers it was placed by hand.
+        { lat: pinned.lat, lon: pinned.lon, acc: null, spd: null, hdg: null }
+      : me.coords
+        ? { lat: me.coords.lat, lon: me.coords.lon, acc: me.accuracy, spd: me.speed, hdg: me.heading }
+        : null;
+  });
+
+  const push = useCallback(() => {
+    const fix = latest.current;
+    if (!fix) return;
+    tracker.send({ t: "fix", fix });
+    setSentAt(Date.now());
+  }, [tracker.send]);
+
   // One sender for both sources: pushes immediately whenever the position or
   // its source changes, then keeps a heartbeat going so the fix stays fresh.
-  const source = pinned ?? me.coords;
   useEffect(() => {
     if (!broadcasting || tracker.status !== "open" || !source) return;
-
-    const push = () => {
-      tracker.send({
-        t: "fix",
-        fix: pinned
-          // A pinned spot has no measurement error to report; a null accuracy is
-          // what tells viewers it was placed by hand.
-          ? { lat: pinned.lat, lon: pinned.lon, acc: null, spd: null, hdg: null }
-          : { lat: source.lat, lon: source.lon, acc: me.accuracy, spd: me.speed, hdg: me.heading },
-      });
-      setSentAt(Date.now());
-    };
-
     push();
     const id = setInterval(push, HEARTBEAT_MS);
     return () => clearInterval(id);
-  }, [broadcasting, tracker.status, pinned, source?.lat, source?.lon, me.accuracy]);
+  }, [broadcasting, tracker.status, pinned, source?.lat, source?.lon, me.accuracy, push]);
+
+  /*
+   * Send one last reading before the session ends. Without this, whoever is
+   * watching is left holding whatever the heartbeat happened to send — up to
+   * HEARTBEAT_MS out of date, and on a moving device that is a whole street.
+   *
+   * pagehide is the event that actually fires when a phone browser is closed or
+   * swiped away; visibilitychange covers backgrounding, where iOS may freeze
+   * the page and never deliver anything else.
+   */
+  useEffect(() => {
+    if (!broadcasting || tracker.status !== "open") return;
+
+    const flush = () => push();
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") flush();
+    };
+
+    window.addEventListener("pagehide", flush);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.removeEventListener("pagehide", flush);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [broadcasting, tracker.status, push]);
 
   const start = (withTakeover: boolean) => {
     setTakeover(withTakeover);
@@ -159,7 +194,15 @@ export default function AdminApp() {
             {tracker.denied === "locked" || tracker.denied === "superseded" ? (
               <Button onClick={() => start(true)}>Take over</Button>
             ) : broadcasting ? (
-              <Button onClick={() => setBroadcasting(false)} muted>
+              <Button
+                onClick={() => {
+                  // Flush first: the socket closes as soon as `broadcasting`
+                  // flips, and the frame is already queued by then.
+                  push();
+                  setBroadcasting(false);
+                }}
+                muted
+              >
                 Stop
               </Button>
             ) : (

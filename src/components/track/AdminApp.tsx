@@ -173,7 +173,7 @@ export default function AdminApp() {
         <div className="flex min-h-0 flex-1 flex-col gap-4">
           <Composer live={live} send={tracker.send} />
           <div className="min-h-0 flex-1">
-            <Timeline updates={tracker.updates} now={now} />
+            <Timeline updates={tracker.updates} now={now} send={tracker.send} />
           </div>
         </div>
       )}

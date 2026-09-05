@@ -85,6 +85,10 @@ export function useTracker(params: Record<string, string>, enabled = true): Trac
               ? current
               : [message.update, ...current],
           );
+        } else if (message.t === "likes") {
+          setUpdates((current) =>
+            current.map((entry) => (entry.id === message.id ? { ...entry, likes: message.likes } : entry)),
+          );
         } else if (message.t === "denied") {
           setDenied(message.reason);
           setStatus("denied");

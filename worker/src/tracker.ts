@@ -3,6 +3,7 @@ import {
   CLOSE,
   MAX_PHOTO_CHARS,
   MAX_UPDATE_TEXT,
+  MAX_VIEWER_ID,
   UPDATE_HISTORY,
   type ClientMessage,
   type Fix,
@@ -41,6 +42,15 @@ export class Tracker extends DurableObject<Env> {
         )
       `);
       ctx.storage.sql.exec("CREATE INDEX IF NOT EXISTS idx_updates_ts ON updates(ts)");
+      // One row per (update, device). The primary key is the deduplication —
+      // liking twice from the same browser is a no-op, no accounts involved.
+      ctx.storage.sql.exec(`
+        CREATE TABLE IF NOT EXISTS likes (
+          update_id TEXT NOT NULL,
+          viewer TEXT NOT NULL,
+          PRIMARY KEY (update_id, viewer)
+        )
+      `);
       this.fix = (await ctx.storage.get<Fix>("fix")) ?? null;
     });
   }
@@ -48,13 +58,41 @@ export class Tracker extends DurableObject<Env> {
   /** The timeline, newest first, without the photo bodies. */
   private timeline(): Update[] {
     return this.ctx.storage.sql
-      .exec<{ id: string; text: string; hasPhoto: number; ts: number }>(
-        `SELECT id, text, (photo IS NOT NULL) AS hasPhoto, ts
-         FROM updates ORDER BY ts DESC LIMIT ?`,
+      .exec<{ id: string; text: string; hasPhoto: number; ts: number; likes: number }>(
+        `SELECT u.id, u.text, (u.photo IS NOT NULL) AS hasPhoto, u.ts,
+                (SELECT COUNT(*) FROM likes WHERE likes.update_id = u.id) AS likes
+         FROM updates u ORDER BY u.ts DESC LIMIT ?`,
         UPDATE_HISTORY,
       )
       .toArray()
-      .map(({ id, text, hasPhoto, ts }) => ({ id, text, hasPhoto: hasPhoto === 1, ts }));
+      .map(({ id, text, hasPhoto, ts, likes }) => ({ id, text, hasPhoto: hasPhoto === 1, ts, likes }));
+  }
+
+  /** Add or remove one device's like, then tell everyone the new tally. */
+  private like(id: string, viewer: string, on: boolean): void {
+    if (typeof id !== "string" || typeof viewer !== "string") return;
+    if (!viewer || viewer.length > MAX_VIEWER_ID) return;
+
+    const exists = this.ctx.storage.sql
+      .exec<{ n: number }>("SELECT COUNT(*) AS n FROM updates WHERE id = ?", id)
+      .one().n;
+    if (exists === 0) return;
+
+    if (on) {
+      this.ctx.storage.sql.exec(
+        "INSERT OR IGNORE INTO likes (update_id, viewer) VALUES (?, ?)",
+        id,
+        viewer,
+      );
+    } else {
+      this.ctx.storage.sql.exec("DELETE FROM likes WHERE update_id = ? AND viewer = ?", id, viewer);
+    }
+
+    const likes = this.ctx.storage.sql
+      .exec<{ n: number }>("SELECT COUNT(*) AS n FROM likes WHERE update_id = ?", id)
+      .one().n;
+
+    for (const ws of this.ctx.getWebSockets()) send(ws, { t: "likes", id, likes });
   }
 
   /** One photo body, as its stored data URL. Served over HTTP, never the socket. */
@@ -114,6 +152,7 @@ export class Tracker extends DurableObject<Env> {
       text: trimmed,
       hasPhoto: image !== null,
       ts: Date.now(),
+      likes: 0,
     };
 
     // No await between the two statements, so they commit as one transaction.
@@ -128,6 +167,8 @@ export class Tracker extends DurableObject<Env> {
       "DELETE FROM updates WHERE id NOT IN (SELECT id FROM updates ORDER BY ts DESC LIMIT ?)",
       UPDATE_HISTORY,
     );
+    // Don't let likes outlive the update they belong to.
+    this.ctx.storage.sql.exec("DELETE FROM likes WHERE update_id NOT IN (SELECT id FROM updates)");
 
     for (const ws of this.ctx.getWebSockets()) send(ws, { t: "update", update });
   }
@@ -139,7 +180,6 @@ export class Tracker extends DurableObject<Env> {
 
   override async webSocketMessage(ws: WebSocket, raw: string | ArrayBuffer): Promise<void> {
     if (typeof raw !== "string") return;
-    if (!this.ctx.getTags(ws).includes(ADMIN)) return; // Viewers are read-only.
 
     let message: ClientMessage;
     try {
@@ -147,6 +187,14 @@ export class Tracker extends DurableObject<Env> {
     } catch {
       return;
     }
+
+    // Liking is the one thing a viewer may write.
+    if (message.t === "like") {
+      this.like(message.id, message.viewer, message.on !== false);
+      return;
+    }
+
+    if (!this.ctx.getTags(ws).includes(ADMIN)) return; // Otherwise viewers are read-only.
 
     if (message.t === "ping") {
       send(ws, this.state());

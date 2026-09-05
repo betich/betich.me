@@ -42,11 +42,13 @@ export default function TrackMap({ me, bundit, fitKey }: TrackMapProps) {
 
     const instance = L.map(container.current, {
       zoomControl: true,
-      attributionControl: true,
+      // Bottom right belongs to the contact buttons, and attribution must stay visible.
+      attributionControl: false,
       center: [me?.lat ?? bundit?.lat ?? 13.7563, me?.lon ?? bundit?.lon ?? 100.5018],
       zoom: 16,
     });
 
+    L.control.attribution({ position: "bottomleft", prefix: false }).addTo(instance);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
       attribution: "&copy; OpenStreetMap",

@@ -3,6 +3,7 @@ import Compass, { COMPASS_CENTER } from "./Compass";
 import TrackMap from "./TrackMap";
 import Timeline from "./Timeline";
 import SpinnyMark from "./SpinnyMark";
+import ContactButtons from "./ContactButtons";
 import { useTracker } from "./useTracker";
 import { useAngleDriver, useDeviceHeading, useGeolocation } from "./sensors";
 import {
@@ -160,9 +161,11 @@ export default function TrackApp() {
         </div>
       ) : (
         <div className="min-h-0 flex-1 pb-3">
-          <Timeline updates={tracker.updates} now={now} />
+          <Timeline updates={tracker.updates} now={now} send={tracker.send} />
         </div>
       )}
+
+      <ContactButtons />
 
       <SpinnyMark headingRef={heading.live} />
 

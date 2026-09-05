@@ -33,12 +33,19 @@ export interface Update {
   text: string;
   hasPhoto: boolean;
   ts: number;
+  likes: number;
 }
 
 /** Messages the admin sends up the socket. */
 export type ClientMessage =
   | { t: "fix"; fix: Omit<Fix, "ts"> }
   | { t: "post"; text: string; photo: string | null }
+  /**
+   * Anyone may like — it is the one thing viewers can write. `viewer` is a
+   * throwaway id the browser makes up for itself, so a like is deduplicated
+   * per device without anybody signing in.
+   */
+  | { t: "like"; id: string; viewer: string; on: boolean }
   | { t: "ping" };
 
 /** Messages the worker pushes down to every socket. */
@@ -51,6 +58,8 @@ export type ServerMessage =
   | { t: "updates"; updates: Update[] }
   /** A single new update, pushed to everyone the moment it is posted. */
   | { t: "update"; update: Update }
+  /** A like count changed. Sent on its own so a tally costs almost nothing. */
+  | { t: "likes"; id: string; likes: number }
   /** The connection was refused; the socket closes right after. */
   | { t: "denied"; reason: DeniedReason };
 
@@ -87,3 +96,6 @@ export const MAX_PHOTO_CHARS = 900_000;
 
 /** How many updates are kept; older ones are dropped as new ones arrive. */
 export const UPDATE_HISTORY = 50;
+
+/** Longest accepted viewer id. Long enough for a UUID, short enough to bound the table. */
+export const MAX_VIEWER_ID = 64;

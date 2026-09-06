@@ -6,12 +6,10 @@
     "jsxImportSource": "react",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@tracker/*": ["./worker/src/*"]
+      "@/*": ["./src/*"]
     }
   },
-  // worker/ targets the Workers runtime and has its own tsconfig.
-  "exclude": ["dist", "worker"],
+  "exclude": ["dist"],
   "plugins": [
     {
       "name": "@astrojs/ts-plugin"

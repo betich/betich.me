@@ -188,12 +188,14 @@ function formatDate(date: Date) {
     position: fixed;
     inset: 0;
     z-index: 60;
-    display: flex;
     align-items: center;
     justify-content: center;
     padding: 6vh 5vw;
     background: rgb(17 17 27 / 0.86);
     cursor: zoom-out;
+  }
+  .lightbox:not([hidden]) {
+    display: flex;
   }
   .lightbox img {
     max-width: 100%;

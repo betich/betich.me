@@ -1,0 +1,60 @@
+---
+---
+
+<div class="not-prose mb-6 flex items-center gap-3 font-mono text-xs">
+  <button type="button" data-view-btn="timeline" class="view-btn" aria-pressed="true">timeline</button>
+  <span class="text-gray-300">/</span>
+  <button type="button" data-view-btn="cards" class="view-btn" aria-pressed="false">cards</button>
+</div>
+
+<script>
+  const STORAGE_KEY = "betich:projects-view";
+  const buttons = document.querySelectorAll<HTMLButtonElement>("[data-view-btn]");
+  const panels: Record<string, HTMLElement | null> = {
+    timeline: document.getElementById("timeline-view"),
+    cards: document.getElementById("cards-view"),
+  };
+
+  function setView(view: string) {
+    buttons.forEach((btn) => {
+      const active = btn.dataset.viewBtn === view;
+      btn.setAttribute("aria-pressed", String(active));
+      btn.classList.toggle("is-active", active);
+    });
+    for (const [name, el] of Object.entries(panels)) {
+      if (el) el.hidden = name !== view;
+    }
+    try {
+      localStorage.setItem(STORAGE_KEY, view);
+    } catch {
+      // localStorage can be unavailable (private mode, blocked storage); the toggle still works, it just won't persist.
+    }
+  }
+
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => setView(btn.dataset.viewBtn as string));
+  });
+
+  let initial = "timeline";
+  try {
+    initial = localStorage.getItem(STORAGE_KEY) || "timeline";
+  } catch {
+    // same as above — fall back to the default view.
+  }
+  setView(initial);
+</script>
+
+<style>
+  .view-btn {
+    color: #9ca3af;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  .view-btn:hover {
+    color: #6b7280;
+  }
+  .view-btn.is-active {
+    color: #4845da;
+    font-style: italic;
+  }
+</style>

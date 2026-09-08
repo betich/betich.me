@@ -5,7 +5,17 @@ description: "A collection of projects I've built over the years — web apps, t
 ---
 
 import ProjectList from "@/components/ProjectList.astro";
+import ProjectCards from "@/components/ProjectCards";
+import ProjectViewToggle from "@/components/ProjectViewToggle.astro";
 
 # projects
 
-<ProjectList />
+<ProjectViewToggle />
+
+<div id="timeline-view">
+  <ProjectList />
+</div>
+
+<div id="cards-view" hidden>
+  <ProjectCards client:load />
+</div>

@@ -25,18 +25,11 @@ The graduate's phone broadcasts their location and posts updates on where they a
 The main screen is a compass. It tells you how far away the graduate is and which way you have to walk to get to them.
 
 <div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
-
   <img
     src="/images/notes/bundit-tracker/viewer-compass-195m.jpg"
     alt="The viewer 195 metres away, screen bright"
     style={{ width: "100%" }}
   />
-  <img
-    src="/images/notes/bundit-tracker/viewer-compass-9606km.jpg"
-    alt="The viewer 9,606 km away, screen dark"
-    style={{ width: "100%" }}
-  />
-
 </div>
 
 
@@ -48,6 +41,15 @@ The little figure at the bottom is  the [same 3D spin viewer that's on my homepa
 The second tab is a plain map with both pins on it and the line between them, so you can see where you are *relative to* the graduate rather than just how far.
 
 The compass is better when you're close and moving. The map is better when you're deciding which building to start walking towards.
+
+
+<div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
+  <img
+    src="/images/notes/bundit-tracker/map.jpg"
+    alt="Map showing the distance from you to the graduate"
+    style={{ width: "100%" }}
+  />
+</div>
 
 ## Feature 3: Updates
 
@@ -117,27 +119,3 @@ The tracker is open source on GitHub and deployed on a Cloudflare Worker with a 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/betich/tracker)
 
 ***Happy Graduation Season!***
-
----
-
-_Footnote: Here is what the system displays when your friends are abroad :p_
-
-<div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
-
-  <img
-    src="/images/notes/bundit-tracker/viewer-compass-3808km.jpg"
-    alt="Straight ahead, 3,808 km away"
-    style={{ width: "100%" }}
-  />
-  <img
-    src="/images/notes/bundit-tracker/viewer-compass-2533km.jpg"
-    alt="2,533 km away, west-southwest"
-    style={{ width: "100%" }}
-  />
-  <img
-    src="/images/notes/bundit-tracker/congrats-map.jpg"
-    alt="The map, dashed line from Bangkok to Taipei"
-    style={{ width: "100%" }}
-  />
-
-</div>

@@ -3,9 +3,16 @@ title: "Turning design tokens into a design system, with a custom shadcn registr
 date: 2026-07-27T21:30:00
 ---
 
+import GitHubCard from "@/components/GitHubCard.astro";
+
 Around the middle of last year, my team and I were building a design system to be built dynamically using design tokens at work — an extensive one, with components and tokens to be changed frequently. The UX/UI team handed us design tokens in the [DTCG](https://tr.designtokens.org/format/) format, Tailwind v4 had just come out, and we had to figure out how to get from one to the other. And along with that, we built a custom Shadcn registry builder to make it easy for other developers to use our design system too.
 
-I've since rewritten the gist of that system as a public repo which is accessible here: [github.com/betich/design-tokens](https://github.com/betich/design-tokens).
+I've since rewritten the gist of that system as a public repo:
+
+<GitHubCard
+  repo="betich/design-tokens"
+  description="DTCG design tokens compiled to Tailwind v4 CSS with Style Dictionary, plus a custom shadcn registry builder."
+/>
 
 ---
 

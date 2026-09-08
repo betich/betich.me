@@ -3,6 +3,8 @@ title: "LINE Runner Bot"
 date: 2026-04-06T19:48:00
 ---
 
+import GitHubCard from "@/components/GitHubCard.astro";
+
 So I had some free time in the weekend to cook up something, thus this project was born.
 
 I made a [LINE Bot](https://developers.line.biz/en/docs/messaging-api/overview/) that keeps track of some statistics for my friend's runner group. The bot keeps track of two metrics - first one being the number of kilometers ran by each member, and the second one being the number of times they have bailed out of running appointments (or as we call it in Thailand — "บิด").
@@ -30,6 +32,11 @@ I deployed the bot on my local Raspberry Pi with a simple `rsync` script to push
 
 While this was made as a fun project (admittedly mainly build using coding agents), I can see myself updating this bot with new features and sharing it with new running groups in the future. Ideas like a web UI, better OCR, local LLM integrations — while they seem kinda overkill — still sounds like a lot of fun to me!
 
-Check out the project at: [github.com/betich/runner-bot](https://github.com/betich/runner-bot) and feel free to set it up for yourself or even contribute to the project! All is welcome ~
+Check out the project and feel free to set it up for yourself or even contribute — all is welcome ~
+
+<GitHubCard
+  repo="betich/runner-bot"
+  description="A LINE bot that tracks kilometres ran and bail-outs for a runner group. Node.js on bun, SQLite, Tesseract OCR."
+/>
 
 _**Bonne semaine!**_

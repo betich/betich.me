@@ -26,11 +26,11 @@ function formatDate(date: Date) {
           <li>
             <a
               href={`/notes/${note.slug}`}
-              class="group flex items-baseline gap-0 py-1 transition-opacity hover:opacity-60"
+              class="group flex flex-col gap-0.5 py-1.5 transition-opacity hover:opacity-60 sm:flex-row sm:items-baseline sm:gap-0 sm:py-1"
             >
-              <span class="shrink-0 font-mono text-sm text-gray-800">{note.data.title}</span>
-              <span class="relative top-[-2px] mx-2 flex-1 border-b border-dotted border-gray-300" />
-              <span class="shrink-0 font-mono text-sm tracking-tight text-gray-400">{formatDate(note.data.date)}</span>
+              <span class="font-mono text-sm text-gray-800 sm:shrink-0">{note.data.title}</span>
+              <span class="relative top-[-2px] mx-2 hidden flex-1 border-b border-dotted border-gray-300 sm:block" />
+              <span class="shrink-0 font-mono text-xs tracking-tight text-gray-400 sm:text-sm">{formatDate(note.data.date)}</span>
             </a>
           </li>
         ))}

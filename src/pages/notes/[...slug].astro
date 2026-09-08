@@ -128,7 +128,8 @@ function formatDate(date: Date) {
     bottom: calc(100% + 6px);
     left: 50%;
     transform: translateX(-50%);
-    white-space: nowrap;
+    max-width: min(220px, calc(100vw - 2rem));
+    white-space: normal;
     background: #1f2937;
     color: #fff;
     font-size: 11px;

@@ -4,6 +4,7 @@ export type Project = {
   description?: string;
   url: string;
   live?: string;
+  writeup?: string;
 };
 
 export type ProjectYear = {
@@ -21,12 +22,21 @@ export const projectsByYear: ProjectYear[] = [
         description: "A live \"where are you\" tracker — one phone broadcasts, everyone waiting gets a compass, a distance and a photo feed. Built for a graduation day.",
         url: "https://github.com/betich/tracker",
         live: "https://track.betich.me",
+        writeup: "/notes/bundit-tracker",
       },
       {
         name: "runner-bot",
         emoji: "🏃",
         description: "A LINE bot that keeps your runner group running.",
         url: "https://github.com/betich/runner-bot",
+        writeup: "/notes/line-runner-bot",
+      },
+      {
+        name: "design-tokens",
+        emoji: "🎨",
+        description: "DTCG design tokens compiled to Tailwind v4 CSS with Style Dictionary, plus a custom shadcn registry builder.",
+        url: "https://github.com/betich/design-tokens",
+        writeup: "/notes/design-token-pipeline",
       },
       {
         name: "mini-home-displays",

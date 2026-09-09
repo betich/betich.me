@@ -35,7 +35,7 @@ type VariantSpec = {
   descriptionMarginBottom: number;
   /** grow factor of the spacer under the text block; 0 pins the block to the bottom */
   bottomSpace: number;
-  /** ghosted spinny head, bleeding off the right edge; omitted where there is no room */
+  /** ghosted spinny head, oversized and cropped by the bottom edge; omitted where there is no room */
   watermark?: { width: number; top: number; left: number; opacity: number };
 };
 
@@ -77,7 +77,7 @@ const VARIANTS: Record<OgVariant, VariantSpec> = {
     titleMarginBottom: 32,
     descriptionMarginBottom: 40,
     bottomSpace: 0.9,
-    watermark: { width: 560, top: 150, left: 700, opacity: 0.05 },
+    watermark: { width: 1250, top: 1040, left: -85, opacity: 0.05 },
   },
 };
 

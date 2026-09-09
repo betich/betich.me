@@ -7,8 +7,10 @@ export function mdxToText(body: string, maxLength = 160): string {
     .replace(/^import\s+.+$/gm, "")                 // import statements
     .replace(/^export\s+.+$/gm, "")                 // export statements
     .replace(/<[^>]+>/g, "")                         // JSX/HTML tags
+    .replace(/\[!\[[^\]]*\]\([^)]*\)\]\([^)]*\)/g, "") // linked images (badges)
     .replace(/!\[.*?\]\(.*?\)/g, "")                 // images
     .replace(/\[([^\]]+)\]\(.*?\)/g, "$1")           // links → text
+    .replace(/\[\s*\]\([^)]*\)/g, "")                // links left empty by the above
     .replace(/^#{1,6}\s+/gm, "")                     // headings
     .replace(/(\*\*|__)(.*?)\1/g, "$2")              // bold
     .replace(/(\*|_)(.*?)\1/g, "$2")                 // italic

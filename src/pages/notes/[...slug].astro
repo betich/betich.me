@@ -2,7 +2,7 @@
 import SidebarLayout from "@/layouts/SidebarLayout.astro";
 import { getCollection } from "astro:content";
 import { FaRss } from "react-icons/fa";
-import { FiTwitter, FiLink, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiTwitter, FiLink, FiDownload, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { mdxToText } from "@/utils/sanitize";
 
 export async function getStaticPaths() {
@@ -40,7 +40,7 @@ function formatDate(date: Date) {
   </article>
 
   <!-- Share + RSS -->
-  <div class="not-prose mt-10 flex items-center gap-4 border-t border-betich-light pt-6">
+  <div class="not-prose relative mt-10 flex items-center gap-4 border-t border-betich-light pt-6">
     <span class="font-mono text-xs text-gray-400">share</span>
     <a
       href={tweetUrl}
@@ -59,6 +59,35 @@ function formatDate(date: Date) {
     >
       <FiLink client:load className="h-4 w-4" />
     </button>
+    <button
+      id="download-btn"
+      type="button"
+      class="tooltip flex text-gray-400 transition-colors hover:text-betich-dark"
+      data-tip="Download image"
+      aria-expanded="false"
+      aria-controls="download-menu"
+    >
+      <FiDownload client:load className="h-4 w-4" />
+    </button>
+
+    <div id="download-menu" class="download-menu" hidden>
+      <p class="download-menu-title">download image</p>
+      <a class="download-option" href={`/og/${note.slug}.png`} download={`${note.slug}-landscape.png`}>
+        <span class="thumb thumb-landscape"></span>
+        <span class="download-option-text">
+          <span class="download-option-label">landscape</span>
+          <span class="download-option-meta">1200×630 · same as og image</span>
+        </span>
+      </a>
+      <a class="download-option" href={`/og/story/${note.slug}.png`} download={`${note.slug}-story.png`}>
+        <span class="thumb thumb-story"></span>
+        <span class="download-option-text">
+          <span class="download-option-label">story</span>
+          <span class="download-option-meta">1080×1920 · ig safe area</span>
+        </span>
+      </a>
+    </div>
+
     <a
       href="/feed.xml"
       target="_blank"
@@ -151,6 +180,100 @@ function formatDate(date: Date) {
   }
   .tooltip:hover::after {
     opacity: 1;
+  }
+  /* the popover replaces the tooltip once it's open */
+  .tooltip[aria-expanded="true"]::after {
+    opacity: 0;
+  }
+
+  /* Download menu */
+  .download-menu {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    z-index: 40;
+    width: min(17rem, 100%);
+    flex-direction: column;
+    gap: 1px;
+    border: 1px solid #dedeff;
+    border-radius: 0.5rem;
+    background: #fff;
+    padding: 6px;
+    box-shadow: 0 14px 34px -14px rgb(72 69 218 / 0.4);
+    animation: menu-in 0.14s ease-out both;
+  }
+  .download-menu:not([hidden]) {
+    display: flex;
+  }
+  .download-menu-title {
+    margin: 0;
+    padding: 3px 8px 5px;
+    font-family: "Roboto Mono", monospace;
+    font-size: 10px;
+    color: #9ca3af;
+  }
+  .download-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 6px;
+    padding: 7px 8px;
+    text-decoration: none;
+    transition: background-color 0.12s ease;
+  }
+  .download-option:hover,
+  .download-option:focus-visible {
+    background: #f2f2ff;
+    outline: none;
+  }
+  .download-option-text {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+  }
+  .download-option-label {
+    font-family: "Roboto Mono", monospace;
+    font-size: 12px;
+    color: #374151;
+    transition: color 0.12s ease;
+  }
+  .download-option:hover .download-option-label,
+  .download-option:focus-visible .download-option-label {
+    color: #4845da;
+  }
+  .download-option-meta {
+    overflow: hidden;
+    font-family: "Roboto Mono", monospace;
+    font-size: 10px;
+    color: #9ca3af;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* miniatures echo the real image: white card, purple accent bar down the left */
+  .thumb {
+    flex-shrink: 0;
+    border: 1px solid #dedeff;
+    border-left: 2px solid #4845da;
+    border-radius: 2px;
+    background: #fff;
+  }
+  .thumb-landscape {
+    height: 18px;
+    width: 34px;
+  }
+  .thumb-story {
+    height: 26px;
+    width: 15px;
+  }
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   /* Toast */
@@ -250,6 +373,28 @@ function formatDate(date: Date) {
     });
   });
 
+  // Download menu: pick a share image format.
+  const downloadBtn = document.getElementById("download-btn");
+  const downloadMenu = document.getElementById("download-menu");
+
+  function setMenuOpen(open: boolean) {
+    if (!downloadBtn || !downloadMenu) return;
+    downloadMenu.hidden = !open;
+    downloadBtn.setAttribute("aria-expanded", String(open));
+  }
+
+  downloadBtn?.addEventListener("click", () => {
+    setMenuOpen(downloadMenu?.hidden ?? false);
+  });
+
+  downloadMenu?.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setMenuOpen(false)));
+
+  document.addEventListener("click", (e) => {
+    const target = e.target as Node;
+    if (downloadBtn?.contains(target) || downloadMenu?.contains(target)) return;
+    setMenuOpen(false);
+  });
+
   // Lightbox: click any standalone content image to view it full-size.
   const lightbox = document.getElementById("lightbox");
   const lightboxImg = document.getElementById("lightbox-img") as HTMLImageElement | null;
@@ -277,6 +422,8 @@ function formatDate(date: Date) {
   lightbox?.addEventListener("click", closeLightbox);
   lightboxClose?.addEventListener("click", closeLightbox);
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeLightbox();
+    if (e.key !== "Escape") return;
+    closeLightbox();
+    setMenuOpen(false);
   });
 </script>

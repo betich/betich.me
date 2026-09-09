@@ -10,6 +10,11 @@ const fontBold = fs.readFileSync(
   path.resolve("node_modules/@fontsource/roboto-mono/files/roboto-mono-latin-700-normal.woff"),
 );
 
+/** Frame 1 of the spinny sequence, cropped to the head. Opaque white ground, which
+ *  disappears into the white canvas once it is knocked back to a few percent. */
+const watermark = `data:image/png;base64,${fs.readFileSync(path.resolve("src/assets/spinny-head.png")).toString("base64")}`;
+const WATERMARK_RATIO = 158 / 128;
+
 export type OgVariant = "landscape" | "story";
 
 type VariantSpec = {
@@ -30,6 +35,8 @@ type VariantSpec = {
   descriptionMarginBottom: number;
   /** grow factor of the spacer under the text block; 0 pins the block to the bottom */
   bottomSpace: number;
+  /** ghosted spinny head, bleeding off the right edge; omitted where there is no room */
+  watermark?: { width: number; top: number; left: number; opacity: number };
 };
 
 const VARIANTS: Record<OgVariant, VariantSpec> = {
@@ -69,7 +76,8 @@ const VARIANTS: Record<OgVariant, VariantSpec> = {
     titleMarginTop: 40,
     titleMarginBottom: 32,
     descriptionMarginBottom: 40,
-    bottomSpace: 0.6,
+    bottomSpace: 0.9,
+    watermark: { width: 560, top: 150, left: 700, opacity: 0.05 },
   },
 };
 
@@ -91,6 +99,7 @@ export async function generateOgImage({
       type: "div",
       props: {
         style: {
+          position: "relative",
           display: "flex",
           width: "100%",
           height: "100%",
@@ -98,6 +107,23 @@ export async function generateOgImage({
           fontFamily: "Roboto Mono",
         },
         children: [
+          // ghosted portrait, painted first so everything else sits over it
+          v.watermark
+            ? {
+                type: "img",
+                props: {
+                  src: watermark,
+                  style: {
+                    position: "absolute",
+                    top: `${v.watermark.top}px`,
+                    left: `${v.watermark.left}px`,
+                    width: `${v.watermark.width}px`,
+                    height: `${Math.round(v.watermark.width * WATERMARK_RATIO)}px`,
+                    opacity: v.watermark.opacity,
+                  },
+                },
+              }
+            : null,
           // left accent bar
           {
             type: "div",
@@ -187,7 +213,7 @@ export async function generateOgImage({
               ].filter(Boolean),
             },
           },
-        ],
+        ].filter(Boolean),
       },
     },
     {

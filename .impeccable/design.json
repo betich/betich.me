@@ -1,0 +1,306 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-18T00:00:00.000Z",
+  "title": "Design System: betich.me",
+  "extensions": {
+    "colorMeta": {
+      "electric-indigo": {
+        "role": "primary",
+        "displayName": "Electric Indigo",
+        "canonical": "#4845DA",
+        "tonalRamp": ["#121038", "#1E1B5C", "#2B2785", "#3A35AE", "#4845DA", "#7C7AE6", "#ABAAF0", "#DEDEFF"]
+      },
+      "indigo-wash": {
+        "role": "primary",
+        "displayName": "Indigo Wash",
+        "canonical": "#DEDEFF",
+        "tonalRamp": ["#1C1B4A", "#2C2A72", "#3E3B9C", "#504DC8", "#6E6CE0", "#9997EB", "#C3C2F7", "#DEDEFF"]
+      },
+      "hover-wash": {
+        "role": "primary",
+        "displayName": "Hover Wash",
+        "canonical": "#F2F2FF",
+        "tonalRamp": ["#25254D", "#363673", "#49499C", "#5E5EC4", "#7B7BDE", "#A3A3EC", "#CBCBF7", "#F2F2FF"]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#FFFFFF",
+        "tonalRamp": ["#111827", "#1F2937", "#374151", "#6B7280", "#9CA3AF", "#D1D5DB", "#E5E7EB", "#FFFFFF"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#111827",
+        "tonalRamp": ["#111827", "#1F2937", "#374151", "#4B5563", "#6B7280", "#9CA3AF", "#D1D5DB", "#F9FAFB"]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Ink Soft",
+        "canonical": "#1F2937",
+        "tonalRamp": ["#111827", "#1F2937", "#374151", "#4B5563", "#6B7280", "#9CA3AF", "#D1D5DB", "#F9FAFB"]
+      },
+      "prose-body": {
+        "role": "neutral",
+        "displayName": "Prose Body",
+        "canonical": "#374151",
+        "tonalRamp": ["#111827", "#1F2937", "#374151", "#4B5563", "#6B7280", "#9CA3AF", "#D1D5DB", "#F9FAFB"]
+      },
+      "prose-muted": {
+        "role": "neutral",
+        "displayName": "Prose Muted",
+        "canonical": "#4B5563",
+        "tonalRamp": ["#111827", "#1F2937", "#374151", "#4B5563", "#6B7280", "#9CA3AF", "#D1D5DB", "#F9FAFB"]
+      },
+      "label": {
+        "role": "neutral",
+        "displayName": "Label Gray",
+        "canonical": "#6B7280",
+        "tonalRamp": ["#111827", "#1F2937", "#374151", "#4B5563", "#6B7280", "#9CA3AF", "#D1D5DB", "#F9FAFB"]
+      },
+      "metadata": {
+        "role": "neutral",
+        "displayName": "Metadata Gray",
+        "canonical": "#9CA3AF",
+        "tonalRamp": ["#111827", "#1F2937", "#374151", "#4B5563", "#6B7280", "#9CA3AF", "#D1D5DB", "#F9FAFB"]
+      },
+      "hairline-neutral": {
+        "role": "neutral",
+        "displayName": "Hairline Neutral",
+        "canonical": "#D1D5DB",
+        "tonalRamp": ["#111827", "#1F2937", "#374151", "#4B5563", "#6B7280", "#9CA3AF", "#D1D5DB", "#F9FAFB"]
+      },
+      "hairline-faint": {
+        "role": "neutral",
+        "displayName": "Hairline Faint",
+        "canonical": "#E5E7EB",
+        "tonalRamp": ["#111827", "#1F2937", "#374151", "#4B5563", "#6B7280", "#9CA3AF", "#E5E7EB", "#F9FAFB"]
+      },
+      "scrim": {
+        "role": "neutral",
+        "displayName": "Lightbox Scrim",
+        "canonical": "rgb(17 17 27 / 0.86)",
+        "tonalRamp": ["#11111B", "#1E1E2E", "#2C2C42", "#3E3E59", "#565672", "#7B7B93", "#A9A9BB", "#DCDCE6"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Note title at the top of an article. Mono 700, Electric Indigo, not-prose." },
+      "headline": { "displayName": "Headline", "purpose": "Project name on a stacked card." },
+      "title": { "displayName": "Title", "purpose": "Page heading — about, projects, portfolio, 404. Deliberately small." },
+      "body": { "displayName": "Body", "purpose": "All running prose, via prose prose-sm prose-gray. The only place Inter appears." },
+      "label": { "displayName": "Label", "purpose": "Nav, timestamps, counters, chips, captions, section links. The workhorse size." },
+      "meta": { "displayName": "Meta", "purpose": "Most reduced register — hints, enlarge, menu meta lines. Tracking opens to 0.14em to stay readable at 11px." }
+    },
+    "shadows": [
+      {
+        "name": "menu-lift",
+        "value": "0 14px 34px -14px rgb(72 69 218 / 0.4)",
+        "purpose": "The download popover. Tinted with the accent rather than black — a floating surface still belongs to the palette."
+      },
+      {
+        "name": "card-lift",
+        "value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+        "purpose": "Draggable project cards, which need to read as a physical stack."
+      },
+      {
+        "name": "lightbox-lift",
+        "value": "0 20px 60px -20px rgb(0 0 0 / 0.6)",
+        "purpose": "The zoomed image inside the note lightbox, over a dark scrim."
+      },
+      {
+        "name": "focus-ring-inset",
+        "value": "inset 0 0 0 3px #4845DA",
+        "purpose": "Keyboard focus on the spinny viewer — an inset ring rather than an outline, so it hugs the stage."
+      }
+    ],
+    "motion": [
+      { "name": "duration-instant", "value": "120ms", "purpose": "Menu row background and label color." },
+      { "name": "duration-fast", "value": "150ms", "purpose": "Tooltip opacity, lightbox close button, content image hover." },
+      { "name": "duration-base", "value": "200ms", "purpose": "Default for color and border-color state changes across nav, buttons, chips, icons." },
+      { "name": "duration-slow", "value": "350ms", "purpose": "Card-stack settle and spinny figure opacity/transform." },
+      { "name": "ease-standard", "value": "ease", "purpose": "Default easing for color and opacity transitions." },
+      { "name": "ease-out", "value": "ease-out", "purpose": "Entry animations — page content fade (250ms), menu rise (140ms), lightbox scale-in (180ms)." },
+      { "name": "ease-settle", "value": "cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "Only the project card stack's release. Do not reuse for ordinary transitions." },
+      { "name": "page-enter", "value": "fadeIn 0.25s ease-out both — opacity 0→1, translateY 6px→0", "purpose": "Every SidebarLayout content region on route change." },
+      { "name": "menu-in", "value": "0.14s ease-out both — opacity 0→1, translateY 4px→0", "purpose": "Download popover entry." },
+      { "name": "spinny-breathe", "value": "2.8s ease-in-out infinite — opacity 1→0.38, translateX 0→2.5%", "purpose": "Idle invitation on the portrait; disabled under prefers-reduced-motion." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ],
+    "layout": [
+      { "name": "sidebar-width", "value": "82px / 112px (sm) / 130px (md)", "purpose": "Fixed left spine, never collapses." },
+      { "name": "content-max", "value": "56rem (max-w-4xl)", "purpose": "Default reading column." },
+      { "name": "content-max-wide", "value": "1600px", "purpose": "Opted into per page — portfolio deck and landing." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Sidebar Nav Link",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Right-aligned index tab down the left spine. Active state is Electric Indigo and italic.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link ds-nav-link--active\" href=\"#\">about</a><a class=\"ds-nav-link\" href=\"#\">projects</a><a class=\"ds-nav-link\" href=\"#\">portfolio</a><a class=\"ds-nav-link\" href=\"#\">notes</a><a class=\"ds-nav-link ds-nav-link--external\" href=\"#\">Résumé<svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><polyline points=\"15 3 21 3 21 9\"/><line x1=\"10\" y1=\"14\" x2=\"21\" y2=\"3\"/></svg></a></nav>",
+      "css": ".ds-nav { display: flex; flex-direction: column; align-items: flex-end; width: 130px; border-right: 1px solid #DEDEFF; padding: 16px 12px 24px; } .ds-nav-link { display: block; margin-bottom: 6px; padding: 0 8px; font-family: \"Roboto Mono\", Sarabun, monospace; font-size: 14px; line-height: 1.625; color: #9CA3AF; text-decoration: none; transition: color 0.2s ease; } .ds-nav-link:hover { color: #6B7280; } .ds-nav-link:focus-visible { outline: 2px solid #4845DA; outline-offset: 2px; } .ds-nav-link--active { color: #4845DA; font-style: italic; } .ds-nav-link--external { display: flex; align-items: center; gap: 4px; margin-top: 24px; }"
+    },
+    {
+      "name": "Text Button",
+      "kind": "button",
+      "refersTo": "text-button",
+      "description": "The site's default control: bare mono text, gray at rest, indigo on hover. Active state adds italic.",
+      "html": "<div class=\"ds-toggle\"><button type=\"button\" class=\"ds-text-btn ds-text-btn--active\" aria-pressed=\"true\">timeline</button><span class=\"ds-toggle-sep\">/</span><button type=\"button\" class=\"ds-text-btn\" aria-pressed=\"false\">cards</button></div>",
+      "css": ".ds-toggle { display: flex; align-items: center; gap: 12px; font-family: \"Roboto Mono\", Sarabun, monospace; font-size: 12px; } .ds-toggle-sep { color: #D1D5DB; } .ds-text-btn { background: none; border: none; border-radius: 0; padding: 0; font-family: inherit; font-size: inherit; color: #9CA3AF; cursor: pointer; transition: color 0.2s ease; } .ds-text-btn:hover { color: #6B7280; } .ds-text-btn:focus-visible { outline: 2px solid #4845DA; outline-offset: 3px; } .ds-text-btn--active { color: #4845DA; font-style: italic; }"
+    },
+    {
+      "name": "Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Pill-shaped outline tag for a project card's links. The one component that inverts to a solid fill on hover.",
+      "html": "<div class=\"ds-chip-row\"><a class=\"ds-chip\" href=\"#\"><svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3\"/></svg>code</a><a class=\"ds-chip\" href=\"#\"><svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><polyline points=\"15 3 21 3 21 9\"/><line x1=\"10\" y1=\"14\" x2=\"21\" y2=\"3\"/></svg>betich.me</a></div>",
+      "css": ".ds-chip-row { display: flex; flex-wrap: wrap; gap: 8px; } .ds-chip { display: inline-flex; align-items: center; gap: 0.3rem; border: 1px solid #DEDEFF; border-radius: 999px; padding: 0.25rem 0.65rem; font-family: \"Roboto Mono\", Sarabun, monospace; font-size: 0.7rem; color: #4845DA; text-decoration: none; transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; } .ds-chip:hover { background-color: #4845DA; border-color: #4845DA; color: #fff; } .ds-chip:focus-visible { outline: 2px solid #4845DA; outline-offset: 2px; }"
+    },
+    {
+      "name": "Icon Button",
+      "kind": "button",
+      "refersTo": "icon-button",
+      "description": "Circular 32px glyph target used around the card stack. The share-row variant drops the border and sits bare.",
+      "html": "<div class=\"ds-nav-btn-row\"><button type=\"button\" class=\"ds-icon-btn\" aria-label=\"Previous project\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"15 18 9 12 15 6\"/></svg></button><span class=\"ds-counter\">3 / 12</span><button type=\"button\" class=\"ds-icon-btn\" aria-label=\"Next project\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"9 18 15 12 9 6\"/></svg></button></div>",
+      "css": ".ds-nav-btn-row { display: flex; align-items: center; gap: 20px; } .ds-counter { font-family: \"Roboto Mono\", Sarabun, monospace; font-size: 12px; color: #9CA3AF; } .ds-icon-btn { display: flex; align-items: center; justify-content: center; height: 2rem; width: 2rem; border: 1px solid #DEDEFF; border-radius: 999px; background: #fff; color: #9CA3AF; cursor: pointer; transition: color 0.2s ease, border-color 0.2s ease; } .ds-icon-btn:hover { color: #4845DA; border-color: #4845DA; } .ds-icon-btn:focus-visible { outline: 2px solid #4845DA; outline-offset: 2px; }"
+    },
+    {
+      "name": "Outlined Card",
+      "kind": "card",
+      "refersTo": "card-outlined",
+      "description": "Prev/next note card. Flat, hairline border, border and text both move to indigo on hover. The disabled twin falls out of the accent family entirely.",
+      "html": "<nav class=\"ds-prevnext\"><a class=\"ds-card-outlined\" href=\"#\"><span class=\"ds-card-outlined-eyebrow\"><svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"15 18 9 12 15 6\"/></svg>previous</span><span class=\"ds-card-outlined-title\">i redesigned my website (again)</span></a><div class=\"ds-card-outlined ds-card-outlined--disabled\"><span class=\"ds-card-outlined-eyebrow\">next<svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"9 18 15 12 9 6\"/></svg></span><span class=\"ds-card-outlined-title\">nothing here</span></div></nav>",
+      "css": ".ds-prevnext { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; } .ds-card-outlined { display: flex; flex-direction: column; gap: 4px; border: 1px solid #DEDEFF; border-radius: 8px; background: #fff; padding: 12px 16px; text-decoration: none; transition: border-color 0.2s ease; } .ds-card-outlined:hover { border-color: #4845DA; } .ds-card-outlined:focus-visible { outline: 2px solid #4845DA; outline-offset: 2px; } .ds-card-outlined-eyebrow { display: flex; align-items: center; gap: 4px; font-family: \"Roboto Mono\", Sarabun, monospace; font-size: 12px; color: #9CA3AF; transition: color 0.2s ease; } .ds-card-outlined-title { font-family: Inter, \"IBM Plex Thai\", sans-serif; font-size: 14px; color: #374151; transition: color 0.2s ease; } .ds-card-outlined:hover .ds-card-outlined-eyebrow, .ds-card-outlined:hover .ds-card-outlined-title { color: #4845DA; } .ds-card-outlined--disabled { border-color: #E5E7EB; opacity: 0.6; cursor: not-allowed; } .ds-card-outlined--disabled .ds-card-outlined-title { color: #6B7280; } .ds-card-outlined--disabled:hover { border-color: #E5E7EB; } .ds-card-outlined--disabled:hover .ds-card-outlined-eyebrow, .ds-card-outlined--disabled:hover .ds-card-outlined-title { color: inherit; }"
+    },
+    {
+      "name": "Stacked Project Card",
+      "kind": "card",
+      "refersTo": "card-stacked",
+      "description": "The draggable project card — 24px radius, 2px border, the only shadowed in-flow surface on the site. Rendered here as the top of its three-deep stack.",
+      "html": "<div class=\"ds-stack\"><div class=\"ds-stack-card ds-stack-card--back2\"></div><div class=\"ds-stack-card ds-stack-card--back1\"></div><div class=\"ds-stack-card ds-stack-card--top\"><div class=\"ds-stack-head\"><span class=\"ds-stack-emoji\">🛰️</span><span class=\"ds-stack-year\">2025</span></div><div class=\"ds-stack-body\"><h3 class=\"ds-stack-title\">bundit-tracker</h3><p class=\"ds-stack-desc\">Live location tracking for a campus parade, with a compass viewer and an admin broadcast console.</p></div><div class=\"ds-chip-row\"><a class=\"ds-chip\" href=\"#\">code</a><a class=\"ds-chip\" href=\"#\">writeup</a></div></div></div>",
+      "css": ".ds-stack { position: relative; height: 440px; width: 100%; max-width: 28rem; margin: 0 auto; } .ds-stack-card { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; border: 2px solid #DEDEFF; border-radius: 24px; background: #fff; padding: 28px; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease; } .ds-stack-card--back2 { transform: translateY(28px) scale(0.91); opacity: 0.64; z-index: 8; } .ds-stack-card--back1 { transform: translateY(14px) scale(0.955); opacity: 0.82; z-index: 9; } .ds-stack-card--top { z-index: 10; cursor: grab; } .ds-stack-card--top:active { cursor: grabbing; } .ds-stack-head { display: flex; align-items: flex-start; justify-content: space-between; } .ds-stack-emoji { font-size: 4.5rem; line-height: 1; } .ds-stack-year { border: 1px solid #DEDEFF; border-radius: 999px; padding: 4px 10px; font-family: \"Roboto Mono\", Sarabun, monospace; font-size: 12px; color: #9CA3AF; } .ds-stack-body { display: flex; flex-direction: column; gap: 8px; } .ds-stack-title { margin: 0; font-family: \"Roboto Mono\", Sarabun, monospace; font-size: 1.25rem; font-weight: 700; color: #4845DA; } .ds-stack-desc { margin: 0; font-family: Inter, \"IBM Plex Thai\", sans-serif; font-size: 14px; line-height: 1.7143; color: #6B7280; } .ds-chip-row { display: flex; flex-wrap: wrap; gap: 8px; } .ds-chip { display: inline-flex; align-items: center; gap: 0.3rem; border: 1px solid #DEDEFF; border-radius: 999px; padding: 0.25rem 0.65rem; font-family: \"Roboto Mono\", Sarabun, monospace; font-size: 0.7rem; color: #4845DA; text-decoration: none; transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; } .ds-chip:hover { background-color: #4845DA; border-color: #4845DA; color: #fff; }"
+    },
+    {
+      "name": "Download Menu",
+      "kind": "custom",
+      "refersTo": "menu-item",
+      "description": "The share-row popover. Accent-tinted lift shadow, 4px rise on entry, and miniatures that echo the real OG image — white card with a 2px indigo left edge.",
+      "html": "<div class=\"ds-menu\"><p class=\"ds-menu-title\">download image</p><a class=\"ds-menu-item\" href=\"#\"><span class=\"ds-thumb ds-thumb--landscape\"></span><span class=\"ds-menu-item-text\"><span class=\"ds-menu-item-label\">landscape</span><span class=\"ds-menu-item-meta\">1200×630 · same as og image</span></span></a><a class=\"ds-menu-item\" href=\"#\"><span class=\"ds-thumb ds-thumb--story\"></span><span class=\"ds-menu-item-text\"><span class=\"ds-menu-item-label\">story</span><span class=\"ds-menu-item-meta\">1080×1920 · ig safe area</span></span></a></div>",
+      "css": ".ds-menu { display: flex; flex-direction: column; gap: 1px; width: min(17rem, 100%); border: 1px solid #DEDEFF; border-radius: 8px; background: #fff; padding: 6px; box-shadow: 0 14px 34px -14px rgb(72 69 218 / 0.4); animation: ds-menu-in 0.14s ease-out both; } .ds-menu-title { margin: 0; padding: 3px 8px 5px; font-family: \"Roboto Mono\", Sarabun, monospace; font-size: 10px; color: #9CA3AF; } .ds-menu-item { display: flex; align-items: center; gap: 10px; border-radius: 6px; padding: 7px 8px; text-decoration: none; transition: background-color 0.12s ease; } .ds-menu-item:hover, .ds-menu-item:focus-visible { background: #F2F2FF; outline: none; } .ds-menu-item-text { display: flex; min-width: 0; flex-direction: column; } .ds-menu-item-label { font-family: \"Roboto Mono\", Sarabun, monospace; font-size: 12px; color: #374151; transition: color 0.12s ease; } .ds-menu-item:hover .ds-menu-item-label, .ds-menu-item:focus-visible .ds-menu-item-label { color: #4845DA; } .ds-menu-item-meta { overflow: hidden; font-family: \"Roboto Mono\", Sarabun, monospace; font-size: 10px; color: #9CA3AF; text-overflow: ellipsis; white-space: nowrap; } .ds-thumb { flex-shrink: 0; border: 1px solid #DEDEFF; border-left: 2px solid #4845DA; border-radius: 2px; background: #fff; } .ds-thumb--landscape { height: 18px; width: 34px; } .ds-thumb--story { height: 26px; width: 15px; } @keyframes ds-menu-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }"
+    },
+    {
+      "name": "Tooltip",
+      "kind": "custom",
+      "refersTo": "tooltip",
+      "description": "CSS-only ::after driven by data-tip. Ink Soft fill, mono 11px, capped at 220px so it can't overflow. Shown here in its always-on demo state.",
+      "html": "<span class=\"ds-tooltip ds-tooltip--open\" data-tip=\"Copy link\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\"/><path d=\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\"/></svg></span>",
+      "css": ".ds-tooltip { position: relative; display: inline-flex; margin-top: 28px; color: #9CA3AF; transition: color 0.2s ease; } .ds-tooltip:hover { color: #4845DA; } .ds-tooltip::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); max-width: min(220px, calc(100vw - 2rem)); white-space: normal; background: #1F2937; color: #fff; font-family: \"Roboto Mono\", Sarabun, monospace; font-size: 11px; padding: 3px 8px; border-radius: 4px; pointer-events: none; opacity: 0; transition: opacity 0.15s ease; } .ds-tooltip:hover::after, .ds-tooltip--open::after { opacity: 1; }"
+    },
+    {
+      "name": "Notes List Row",
+      "kind": "custom",
+      "refersTo": "text-button",
+      "description": "The index-page row: mono title, dotted leader, mono timestamp. The leader is the Lab Notebook made literal. Hidden below 640px, where the row stacks.",
+      "html": "<ul class=\"ds-notes\"><li><a class=\"ds-note-row\" href=\"#\"><span class=\"ds-note-title\">designing a design token pipeline</span><span class=\"ds-note-leader\"></span><span class=\"ds-note-date\">2025.11.04 22:10</span></a></li><li><a class=\"ds-note-row\" href=\"#\"><span class=\"ds-note-title\">bundit tracker</span><span class=\"ds-note-leader\"></span><span class=\"ds-note-date\">2025.08.19 01:47</span></a></li></ul>",
+      "css": ".ds-notes { list-style: none; margin: 0; padding: 0; } .ds-note-row { display: flex; flex-direction: column; gap: 2px; padding: 6px 0; text-decoration: none; transition: opacity 0.2s ease; } .ds-note-row:hover { opacity: 0.6; } .ds-note-row:focus-visible { outline: 2px solid #4845DA; outline-offset: 2px; } .ds-note-title { font-family: \"Roboto Mono\", Sarabun, monospace; font-size: 14px; color: #1F2937; } .ds-note-date { flex-shrink: 0; font-family: \"Roboto Mono\", Sarabun, monospace; font-size: 12px; letter-spacing: -0.01em; color: #9CA3AF; } .ds-note-leader { display: none; } @media (min-width: 640px) { .ds-note-row { flex-direction: row; align-items: baseline; gap: 0; padding: 4px 0; } .ds-note-title { flex-shrink: 0; } .ds-note-leader { position: relative; top: -2px; display: block; flex: 1; margin: 0 8px; border-bottom: 1px dotted #D1D5DB; } .ds-note-date { font-size: 14px; } }"
+    },
+    {
+      "name": "Toast",
+      "kind": "custom",
+      "refersTo": "toast",
+      "description": "Copy-link confirmation. Ink Soft, mono 12px, rises 6px into place, holds 2s. Announced via aria-live=polite.",
+      "html": "<div class=\"ds-toast ds-toast--show\" aria-live=\"polite\">Link copied!</div>",
+      "css": ".ds-toast { display: inline-block; background: #1F2937; color: #fff; font-family: \"Roboto Mono\", Sarabun, monospace; font-size: 12px; padding: 8px 16px; border-radius: 6px; pointer-events: none; opacity: 0; transform: translateY(6px); transition: opacity 0.2s ease, transform 0.2s ease; } .ds-toast--show { opacity: 1; transform: translateY(0); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Lab Notebook",
+    "overview": "This is a working notebook kept in public. Everything on the page behaves like an entry in one: monospace is the native handwriting, dates are stamped to the minute in YYYY.MM.DD HH:MM, links to related material are filed in brackets — [live], [writeup] — and dotted leader lines run from a note's title to its timestamp the way they would across a ruled index page. Nothing is styled to look finished. Things are labeled, dated, and set down.\n\nThe page ground is paper white, and there is exactly one color on it. Electric Indigo (#4845DA) is the pen you only pick up for what matters: the current page in the nav, the title of the thing you're reading, a link you can follow, the state you just changed. Everything else is written in graphite — a four-step gray ramp that carries body prose, labels, and metadata without ever competing. Indigo Wash (#DEDEFF) is the same ink at margin strength, and it draws every rule and border on the site. The result is a page where a single hue does all the pointing, and the rest is legible quiet.\n\nIt is deliberately not a SaaS landing page. There is no gradient hero, no glassmorphism, no floating feature grid, no call-to-action button waiting to convert anybody. This is a person's site — a portrait you can spin, a timeline of things they built, notes they wrote down, a deck of selected work — and it asks for reading, not signup. Restraint is the personality, but the surfaces are not inert: cards throw with real momentum and settle on a spring, the portrait breathes until you touch it, menus rise 4px into place. Understated, and tactile everywhere you put your hands.",
+    "keyCharacteristics": [
+      "Monospace-first: Roboto Mono carries all structure; Inter appears only inside running prose.",
+      "One accent on a white ground — indigo signals, gray informs.",
+      "Hairline #DEDEFF borders instead of shadows; flat until something lifts off the page.",
+      "Lowercase UI labels; sentence case reserved for prose.",
+      "Left sidebar spine, 82px on a phone and 130px on a desktop, present on every page.",
+      "Small type by default: 14px body, 12px labels, 11px metadata.",
+      "Motion is short (120–350ms) and physical where it's draggable."
+    ],
+    "rules": [
+      {
+        "name": "The One Pen Rule",
+        "body": "Electric Indigo is the only chromatic color on the site. If a new surface needs to distinguish two things, it distinguishes them with weight, size, or position in the gray ramp — not with a second hue. Adding a green \"success\" or a red \"error\" breaks the system before it helps it.",
+        "section": "colors"
+      },
+      {
+        "name": "The Indigo-Is-The-Destination Rule",
+        "body": "Interactive elements sit in gray at rest and arrive at #4845DA on hover, focus, or active. Indigo is never the resting state of something you can't act on, and gray is never the hover state of something you can.",
+        "section": "colors"
+      },
+      {
+        "name": "The White Ground Rule",
+        "body": "Every surface is #FFFFFF. There is no gray card background, no tinted panel, no striped table. The two exceptions are both temporary overlays (tooltip, toast) and both use Ink Soft.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mono Frame Rule",
+        "body": "Everything structural is Roboto Mono: headings, nav, dates, counters, buttons, chips, captions, labels, tooltips, toasts, OG images. Inter appears in exactly one context — running prose inside a .prose container. If you are unsure which font a new element takes, it is mono.",
+        "section": "typography"
+      },
+      {
+        "name": "The Lowercase Rule",
+        "body": "UI labels and page titles are lowercase: about, projects, portfolio, notes, share, enlarge, previous, next, nothing here, 404. Sentence case begins at the first paragraph of prose and nowhere earlier. Never use text-transform: uppercase — tracking, not caps, is how this site adds formality.",
+        "section": "typography"
+      },
+      {
+        "name": "The Italic-Is-Here Rule",
+        "body": "Italic means \"you are currently on this\" — the active sidebar link and the active view toggle, both in Electric Indigo. Italic is never decorative emphasis in the chrome.",
+        "section": "typography"
+      },
+      {
+        "name": "The Always-Visible Spine Rule",
+        "body": "The sidebar is present on every route at every breakpoint, including 320px. Shrink it, never hide it.",
+        "section": "layout"
+      },
+      {
+        "name": "The Flat-Until-It-Lifts Rule",
+        "body": "A surface that stays in the document flow gets a 1px #DEDEFF border and no shadow. A surface that is floating, dragged, or modal may take one of the three shadows above. There is no fourth shadow and no hover-elevation; hover changes color, not height.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Rules-Are-Straight Rule",
+        "body": "Anything that divides the page — a border between regions, a horizontal rule, a frame around content — has zero radius. Radius signals \"object,\" and a divider is not an object.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do reach for Roboto Mono by default. Inter is only for running prose inside a .prose container.",
+      "Do write UI labels in lowercase — about, share, enlarge, previous, nothing here.",
+      "Do separate surfaces with a 1px solid #DEDEFF hairline and keep the ground #FFFFFF.",
+      "Do make #4845DA the hover destination for anything interactive, and leave it at #9CA3AF at rest.",
+      "Do use italic + Electric Indigo to mean \"you are here,\" on nav and on toggles.",
+      "Do stamp dates as YYYY.MM.DD HH:MM in mono, and zero-pad sequence numbers (01, 02).",
+      "Do open tracking as size drops: 0.14em at 11px, normal at 14px.",
+      "Do keep transitions between 120ms and 350ms, ease or ease-out; use cubic-bezier(0.22, 1, 0.36, 1) only for the card stack's settle.",
+      "Do guard every ambient animation behind prefers-reduced-motion: reduce, as the spinny viewer does.",
+      "Do give every icon-only control an aria-label or a data-tip tooltip, and wrap localStorage access in try/catch.",
+      "Do keep the sidebar visible at 320px by shrinking it (82px), never by hiding it."
+    ],
+    "donts": [
+      "Don't introduce a second hue. No green success, no red error, no category colors — use the gray ramp, weight, or position instead.",
+      "Don't add a tinted surface color. There is no bg-gray-50 card on this site.",
+      "Don't add a fourth shadow, or use shadow as a hover state. Hover changes color, not height.",
+      "Don't round a divider, rule, or frame. Structural lines have 0px radius.",
+      "Don't use text-transform: uppercase anywhere; tracking carries that job.",
+      "Don't set body prose above 14px or labels above 12px — the small scale is the voice, not an oversight.",
+      "Don't build a SaaS-shaped section: no gradient hero, no glassmorphism, no floating feature grid, no filled call-to-action button.",
+      "Don't make a solid-filled button. The only component that fills on hover is the chip, and only on hover.",
+      "Don't collapse the sidebar into a hamburger menu at any breakpoint.",
+      "Don't put a dark scrim behind white artwork — the portfolio lightbox uses a white scrim for exactly this reason."
+    ]
+  }
+}

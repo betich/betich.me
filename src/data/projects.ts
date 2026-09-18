@@ -17,6 +17,13 @@ export const projectsByYear: ProjectYear[] = [
     year: 2026,
     projects: [
       {
+        name: "tools",
+        emoji: "🧰",
+        description: "A small workshop kept in public — image compression and a bulk image merge, both running entirely in your browser.",
+        url: "https://github.com/betich/tools",
+        live: "https://tools.betich.me",
+      },
+      {
         name: "bundit tracker",
         emoji: "🧭",
         description: "A live \"where are you\" tracker — one phone broadcasts, everyone waiting gets a compass, a distance and a photo feed. Built for a graduation day.",

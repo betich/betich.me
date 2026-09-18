@@ -4,18 +4,8 @@ prose: true
 description: "A collection of projects I've built over the years — web apps, tools, and experiments."
 ---
 
-import ProjectList from "@/components/ProjectList.astro";
 import ProjectCards from "@/components/ProjectCards";
-import ProjectViewToggle from "@/components/ProjectViewToggle.astro";
 
 # projects
 
-<ProjectViewToggle />
-
-<div id="timeline-view">
-  <ProjectList />
-</div>
-
-<div id="cards-view" hidden>
-  <ProjectCards client:load />
-</div>
+<ProjectCards client:load />

@@ -5,6 +5,11 @@ export type Project = {
   url: string;
   live?: string;
   writeup?: string;
+  /**
+   * A screenshot of the work. `phone` shots are portrait captures framed as a device;
+   * `contain` keeps diagrams whole instead of cropping them to fill.
+   */
+  image?: { src: string; alt: string; phone?: boolean; contain?: boolean };
 };
 
 export type ProjectYear = {
@@ -22,6 +27,7 @@ export const projectsByYear: ProjectYear[] = [
         description: "A small workshop kept in public — image compression and a bulk image merge, both running entirely in your browser.",
         url: "https://github.com/betich/tools",
         live: "https://tools.betich.me",
+        image: { src: "/images/projects/tools.webp", alt: "tools.betich.me index with the squoosh and mail merge tools" },
       },
       {
         name: "bundit tracker",
@@ -30,6 +36,7 @@ export const projectsByYear: ProjectYear[] = [
         url: "https://github.com/betich/tracker",
         live: "https://track.betich.me",
         writeup: "/notes/bundit-tracker",
+        image: { src: "/images/notes/bundit-tracker/viewer-compass-195m.jpg", alt: "The viewer compass pointing to the broadcaster, 195 m away", phone: true },
       },
       {
         name: "runner-bot",
@@ -37,6 +44,7 @@ export const projectsByYear: ProjectYear[] = [
         description: "A LINE bot that keeps your runner group running.",
         url: "https://github.com/betich/runner-bot",
         writeup: "/notes/line-runner-bot",
+        image: { src: "/images/notes/line-runner-bot/km-leaderboard.png", alt: "The weekly kilometre leaderboard posted in a LINE chat" },
       },
       {
         name: "design-tokens",
@@ -44,6 +52,7 @@ export const projectsByYear: ProjectYear[] = [
         description: "DTCG design tokens compiled to Tailwind v4 CSS with Style Dictionary, plus a custom shadcn registry builder.",
         url: "https://github.com/betich/design-tokens",
         writeup: "/notes/design-token-pipeline",
+        image: { src: "/images/notes/design-token-pipeline/style-dictionary-architecture.png", alt: "Diagram of the Style Dictionary token pipeline", contain: true },
       },
       {
         name: "mini-home-displays",
@@ -62,6 +71,7 @@ export const projectsByYear: ProjectYear[] = [
         description: "Gathers competition opportunities, camps, and activities for students.",
         url: "https://contester.life",
         live: "https://contester.life",
+        image: { src: "/images/projects/contester.webp", alt: "contester.life home page with contest search" },
       },
       {
         name: "intania jukebox",
@@ -86,6 +96,7 @@ export const projectsByYear: ProjectYear[] = [
         description: "Web services for a camp teaching web development to high school students.",
         url: "https://github.com/webmastercamp",
         live: "https://13.jwc.in.th",
+        image: { src: "/images/projects/jwc13.webp", alt: "Junior Webmaster Camp 13 landing page" },
       },
       {
         name: "cu-tu 2024 unity football match",
@@ -123,6 +134,7 @@ export const projectsByYear: ProjectYear[] = [
         description: "ช่วยทุกคนกาบัตรเลือกตั้งของตัวเองได้อย่างมั่นใจ — An interactive website that provides information about the 2023 Election, including an Election Simulator, a game that guides you through the process of the election. Integrated with a machine learning model that asseses if the election ballot is valid or not.",
         url: "https://github.com/PED4you/ped4you-website",
         live: "https://ped4you.com",
+        image: { src: "/images/projects/ped4you.webp", alt: "ped4you home page with the duck mascot holding a ballot" },
       },
       {
         name: "cu wander",
@@ -136,6 +148,7 @@ export const projectsByYear: ProjectYear[] = [
         description: "Interactive quiz to help prospective students find their best-fit major.",
         url: "https://github.com/thinc-org/intania-oph",
         live: "https://intania-oph.vercel.app/",
+        image: { src: "/images/projects/intania-oph.webp", alt: "CU Intania Open House 2023 landing page with countdown" },
       },
       {
         name: "vid love vid u 2023",
@@ -175,6 +188,7 @@ export const projectsByYear: ProjectYear[] = [
         description: "Platform for practicing algorithms, data structures, and competitive programming.",
         url: "https://github.com/programming-in-th/programming.in.th",
         live: "https://programming.in.th",
+        image: { src: "/images/projects/programming-in-th.webp", alt: "programming.in.th home page" },
       },
       {
         name: "tucmc website",
@@ -182,6 +196,7 @@ export const projectsByYear: ProjectYear[] = [
         description: "Website for the Triam Udom Computer Club.",
         url: "https://github.com/triamudomcmc/tucmc-site",
         live: "https://clubs.triamudom.ac.th/",
+        image: { src: "/images/projects/tucmc.webp", alt: "Triam Udom Computer Club home page" },
       },
       {
         name: "triam udom clubs registration system",
@@ -189,6 +204,7 @@ export const projectsByYear: ProjectYear[] = [
         description: "Club registration system used by 3,000+ students at Triam Udom Suksa School.",
         url: "https://github.com/triamudomcmc/clubreg",
         live: "https://register.clubs.triamudom.ac.th/",
+        image: { src: "/images/projects/clubreg.webp", alt: "Triam Udom club registration landing page" },
       },
       {
         name: "triam udom open house 2022",
@@ -208,6 +224,7 @@ export const projectsByYear: ProjectYear[] = [
         description: "Typing practice website with Thai language support.",
         url: "https://github.com/betich/salimtype",
         live: "https://salim-type.web.app",
+        image: { src: "/images/projects/salimtype.webp", alt: "salimtype typing test with a Thai quote" },
       },
       {
         name: "the 5th stupid hackathon thailand",
@@ -215,6 +232,7 @@ export const projectsByYear: ProjectYear[] = [
         description: "Website for the 5th Stupid Hackathon Thailand — build something useless.",
         url: "https://github.com/StupidHackTH/Stupid-Hackathon-5-Webpage",
         live: "https://stupid.hackathon.in.th/5",
+        image: { src: "/images/projects/stupid5.webp", alt: "The 5th Stupid Hackathon Thailand page with a pixel astronaut" },
       },
       {
         name: "tocpc website",
@@ -229,6 +247,7 @@ export const projectsByYear: ProjectYear[] = [
         description: "Study schedule generator for Triam Udom Suksa School students.",
         url: "https://github.com/triamudomcmc/schedule-generator",
         live: "https://schedule.tucm.cc",
+        image: { src: "/images/projects/tu-schedule.webp", alt: "Triam Udom schedule generator form" },
       },
       {
         name: "online loy kratong",

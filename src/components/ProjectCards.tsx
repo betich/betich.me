@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { FiChevronUp, FiChevronDown, FiGithub, FiExternalLink, FiFileText } from "react-icons/fi";
+import { FiChevronUp, FiChevronDown } from "react-icons/fi";
+import { ProjectLinks, ProjectShot } from "@/components/ProjectBits";
 import { projectsByYear, type Project } from "@/data/projects";
 
 type Card = Project & { year: number; indexInYear: number; yearCount: number };
@@ -167,60 +168,49 @@ export default function ProjectCards() {
             <div className="relative h-[min(440px,58svh)] w-full">
               {CARDS.map((card, i) => {
                 const offset = i - index;
-                const liveLabel = card.live?.replace(/^https?:\/\//, "").replace(/\/$/, "");
+                const hasShot = Boolean(card.image);
                 return (
                   <article
                     key={`${card.year}-${card.name}`}
                     aria-hidden={offset !== 0}
-                    className="absolute inset-0 flex origin-bottom flex-col justify-between gap-4 overflow-hidden rounded-3xl border-2 border-betich-light bg-white p-5 shadow-[0_12px_32px_-12px_rgb(72_69_218/0.22)] sm:p-7"
+                    className="deck-card absolute inset-0 flex origin-bottom flex-col justify-between gap-4 overflow-hidden rounded-3xl border-2 border-betich-light bg-white p-5 shadow-[0_12px_32px_-12px_rgb(72_69_218/0.22)] sm:p-7"
                     style={{ ...cardStyle(offset, reduced), transition }}
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <span className="text-5xl leading-none sm:text-7xl">{card.emoji}</span>
-                      <span className="rounded-full border border-betich-light px-2.5 py-1 font-mono text-[11px] text-gray-500">
-                        {card.year}
-                      </span>
-                    </div>
+                    {hasShot ? (
+                      <div className="relative min-h-0 flex-1">
+                        <ProjectShot project={card} className="h-full" />
+                        <span className="absolute right-3 top-3 rounded-full border border-betich-light bg-white/95 px-2.5 py-1 font-mono text-[11px] text-gray-500">
+                          {card.year}
+                        </span>
+                        <span className="absolute -bottom-5 left-4 flex h-12 w-12 items-center justify-center rounded-full border-2 border-betich-light bg-white text-2xl leading-none sm:h-14 sm:w-14 sm:text-3xl">
+                          {card.emoji}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex items-start justify-between gap-3">
+                        <span className="text-5xl leading-none sm:text-7xl">{card.emoji}</span>
+                        <span className="rounded-full border border-betich-light px-2.5 py-1 font-mono text-[11px] text-gray-500">
+                          {card.year}
+                        </span>
+                      </div>
+                    )}
 
-                    <div className="flex min-h-0 flex-col gap-2">
+                    <div className={`flex min-h-0 flex-col gap-2 ${hasShot ? "mt-4" : ""}`}>
                       <h3 className="text-balance font-mono text-base font-bold text-betich-dark sm:text-xl">
                         {card.name}
                       </h3>
                       {card.description && (
-                        <p className="line-clamp-5 text-sm leading-relaxed text-gray-500 sm:line-clamp-6">
+                        <p
+                          className={`text-sm leading-relaxed text-gray-500 ${
+                            hasShot ? "line-clamp-2 sm:line-clamp-3" : "line-clamp-5 sm:line-clamp-6"
+                          }`}
+                        >
                           {card.description}
                         </p>
                       )}
                     </div>
 
-                    <div className="flex flex-wrap gap-2">
-                      <a
-                        href={card.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="card-chip"
-                        tabIndex={offset === 0 ? 0 : -1}
-                      >
-                        <FiGithub className="h-3 w-3" /> code
-                      </a>
-                      {card.live && (
-                        <a
-                          href={card.live}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="card-chip"
-                          tabIndex={offset === 0 ? 0 : -1}
-                        >
-                          <FiExternalLink className="h-3 w-3 shrink-0" />
-                          <span className="truncate">{liveLabel}</span>
-                        </a>
-                      )}
-                      {card.writeup && (
-                        <a href={card.writeup} className="card-chip" tabIndex={offset === 0 ? 0 : -1}>
-                          <FiFileText className="h-3 w-3" /> writeup
-                        </a>
-                      )}
-                    </div>
+                    <ProjectLinks project={card} focusable={offset === 0} />
                   </article>
                 );
               })}
@@ -290,7 +280,10 @@ export default function ProjectCards() {
         </div>
       </div>
 
-      <style>{`
+      <style
+        // Inline so selectors like `a > b` survive SSR unescaped and hydrate cleanly.
+        dangerouslySetInnerHTML={{
+          __html: `
         .odometer {
           display: inline-flex;
           font-variant-numeric: tabular-nums;
@@ -384,50 +377,9 @@ export default function ProjectCards() {
           .rail-year.is-active .rail-tick.is-current > span { width: 2rem; }
         }
 
-        .card-chip {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.3rem;
-          max-width: 100%;
-          border-radius: 999px;
-          border: 1px solid #DEDEFF;
-          padding: 0.25rem 0.65rem;
-          font-family: "Roboto Mono", "Sarabun", monospace;
-          font-size: 0.7rem;
-          color: #4845DA;
-          transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-          text-decoration: none;
-        }
-        .card-chip:hover {
-          background-color: #4845DA;
-          color: #fff;
-          border-color: #4845DA;
-        }
-        .nav-btn {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          height: 2rem;
-          width: 2rem;
-          border-radius: 999px;
-          border: 1px solid #DEDEFF;
-          color: #9CA3AF;
-          transition: color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
-        }
-        .nav-btn:hover:not(:disabled) {
-          color: #4845DA;
-          border-color: #4845DA;
-        }
-        .nav-btn:disabled {
-          opacity: 0.4;
-          cursor: default;
-        }
-        .card-chip:focus-visible,
-        .nav-btn:focus-visible {
-          outline: 2px solid #4845DA;
-          outline-offset: 2px;
-        }
-      `}</style>
+      `,
+        }}
+      />
     </div>
   );
 }
